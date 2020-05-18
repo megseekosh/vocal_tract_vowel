@@ -1,0 +1,72 @@
+---
+title: "validate_ratio"
+author: "Meg Cychosz"
+date: "2/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library('phonTools')
+```
+
+```{r}
+data(pb52)
+
+# we expect the ratio to differ between men and women
+# men should have longer pharyngeal cavities than women
+
+# get the mean of a for f1 and f2
+# do for all women and all men or do one by one?
+
+new_pb52 <- pb52 %>% 
+  filter(vowel=='A') %>%
+  group_by(speaker) %>%
+  mutate(f1f2 = mean(f1)/mean(f2)) %>%
+  mutate(f2f3 = mean(f2)/mean(f3))
+
+women <- new_pb52 %>%
+  filter(type=='w')
+
+men <- new_pb52 %>%
+  filter(type=='m')
+
+num_men_pb52 <- pb52 %>% 
+  filter(type=='m') %>%
+  distinct(speaker) %>%
+  nrow()
+
+num_women_pb52 <- pb52 %>% 
+  filter(type=='w') %>%
+  distinct(speaker) %>%
+  nrow()
+```
+
+```{r}
+data(h95)
+
+new_h95 <- h95 %>% 
+  filter(vowel=='A') %>%
+  group_by(speaker) %>%
+  mutate(f1f2 = mean(f1)/mean(f2)) %>%
+  mutate(f2f3 = mean(f2)/mean(f3))
+
+women_h95 <- new_h95 %>%
+  filter(type=='w')
+
+men_h95 <- new_h95 %>%
+  filter(type=='m')
+
+num_men <- h95 %>% 
+  filter(type=='m') %>%
+  distinct(speaker) %>%
+  nrow()
+
+num_women <- h95 %>% 
+  filter(type=='w') %>%
+  distinct(speaker) %>%
+  nrow()
+```
