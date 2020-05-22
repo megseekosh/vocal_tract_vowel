@@ -3,10 +3,16 @@ _under development_
 
 Triple vowel formant tracker that measures formants using three different systems and computes the median of them. Additional scripts to visualize and identify outliers and mis-tracked formants. Also contains all scripts and notebooks to replicate results from Chapter 2 of dissertation.  
 
+
 ## What's what in this repo
 
 * [Notebooks to track formants and compute vocal tract length](#acoustic-measurements)
 * [Scripts used to analyze vowel variability and generate results](#data-analysis)
+
+
+## Dependencies
+
+The following Python dependencies are required to run the scripts in this repo: `pandas`, `fnmatch`, `phonlab` (available [here](https://github.com/rsprouse/phonlab)), `numpy`, `seaborn`, `matplotlib`, `audiolabel` (available [here] (https://github.com/rsprouse/audiolabel)), and `numpy`, in addition to other generic libraries that are pretty standard with any Python installation. Additional R libraries are needed and are listed in the R scripts/notebooks. 
 
 
 ## Acoustic measurements
@@ -36,7 +42,7 @@ Throughout these notebooks, the output from the cells has been cleared as it con
 
 `calculate_CoV.py` - short script to compute the coefficient of variation of formant measurements; vowel-extrinsic and intrinsic options
 
-References
+## Citations
 
 Watanabe, A. (2001). Formant estimation method using inverse-filter control. _IEEE Transactions on Speech and Audio Processing_, 9(_4_), 317-326.
 
