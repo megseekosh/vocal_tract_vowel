@@ -12,7 +12,7 @@ Triple vowel formant tracker that measures formants using three different system
 
 ## Dependencies
 
-The following Python dependencies are required to run the scripts in this repo: `pandas`, `fnmatch`, `phonlab` (available [here](https://github.com/rsprouse/phonlab)), `numpy`, `seaborn`, `matplotlib`, `audiolabel` (available [here] (https://github.com/rsprouse/audiolabel)), and `numpy`, in addition to other generic libraries that are pretty standard with any Python installation. Additional R libraries are needed and are listed in the R scripts/notebooks. 
+The following Python dependencies are required to run the scripts in this repo: `pandas`, `fnmatch`, `phonlab`, `audiolabel`, (both available [here](https://github.com/rsprouse)), `numpy`, `seaborn`, `matplotlib`, and `numpy`, in addition to other generic libraries that are pretty standard with any Python installation. Additional R libraries are needed and are listed in the R scripts/notebooks. 
 
 
 ## Acoustic measurements
@@ -28,6 +28,7 @@ Throughout these notebooks, the output from the cells has been cleared as it con
 
 `get_vt_length.ipnyb` - compute child and adult vocal track length and DeltaF ratio using F1-F3 (for children) and F1-F4 (for adults); this script is sewn into the R script `3_vtl_results.Rmd` that generates the results section
 
+
 ## Data analysis
 
 `1_cleanvowels_eo.Rmd` - select relevant lexical items and remove all formant measurements outside of 3 MADs from the median; not included in the public repo as it contains personal identifying information
@@ -37,6 +38,7 @@ Throughout these notebooks, the output from the cells has been cleared as it con
 `3_vtl_results.Rmd` - generates results section of manuscript, including 1) calculation of vocal tract length/deltaF, 2) calculating vowel dispersion via coefficient of variation, 3) vowel normalization via Lobanov and DeltaF techniques, 4) modeling differences by normalization technique, 5) calculating formant ratios between supraglottal cavities, 6) modeling differences by supraglottal cavity formant ratios
 
 `validate_ratio.Rmd` - script to validate the method for computing supraglottal cavity sizes using formant measurements (F1:F2 and F2:F3 ratios) 
+
 
 ## Other scripts in this repo
 
