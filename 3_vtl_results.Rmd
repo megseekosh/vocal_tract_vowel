@@ -1,0 +1,2055 @@
+---
+title: "Chapter 1 Results: vocalic development"
+author: "Meg Cychosz"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    toc: False
+indent: true
+header-includes:
+ \usepackage{float}
+ \floatplacement{figure}{H} # to stop figures from floating around
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, 
+                      warning=FALSE)
+library(reticulate) # note: you do NOT want to run reticulate via r-miniconda; do not install it when prompted! major conflicts with python modules
+use_python("/usr/bin/python3")
+```
+
+```{r, load packages, include = FALSE}
+#remotes::install_github('rstudio/rmarkdown') #until rmarkdown-papaja incompatibility is fixed
+library('dplyr')
+library('tidyverse')
+library('ggplot2')
+library('bookdown')
+library('ggpubr')
+library('stargazer')
+library('data.table')
+library('lme4')
+library('kableExtra')
+library('stats')
+library('glmmTMB')
+library("car")
+#devtools::install_github("crsh/papaja")
+```
+
+# Results
+
+The primary research question in this study asks if children's vowel variation decreases over the course of development in a language with a three-vowel contrast. The results for the first experiment begin with descriptive statistics of the participants' formant patterns by age, prior to speaker normalization, for the three phonemic vowels /a, i, u/. Then, the formant measures for these phonemic vowels are normalized using one of the scaling techniques - $\Delta$F - described in the methods section. Using these normalized data, a series of models are fit to predict the degree of participants' vowel dispersion and determine if vowel variability decreases over the course of development, as predicted in previous work (Eguchi & Hirsch, 1962; Lee et al., 1999; Ménard et al., 2007). The second half of the results section is devoted to comparing the uniform ($\Delta$F) and non-uniform (Lobanov) formant frequency scaling techniques. 
+
+All analyses were conducted in the RStudio computing environment (version: 1.2.5019; {rstudio}. Data visualizations were created with {ggplot2} {ggplot2}. Modeling was conducted using the {lme4} {lme4}, {lmerTest} {lmertest}, and {glmmTMB} {glmmtmb} packages and summaries were presented with {papaja} {papaja} and {Stargazer} {stargazer}. Tests of residual normality were conducted using the {normtest} package {normtest}. The significance of potential model parameters was determined using a combination of log-likelihood comparisons between models, AIC estimations, and p-values procured from model summaries. In all models, continuous predictors were mean-centered to facilitate model interpretation.
+
+```{python, include=FALSE}
+import os, sys, fnmatch
+import re
+import pandas as pd   # this package still won't load
+from sys import argv
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+```{python, warning=FALSE, include=FALSE}
+# read in data
+formants = pd.read_csv('/Users/Meg/Box Sync/Dissertation/Experiment_1/analysis/analysis_scripts/cleaned_vowels_eo.anonymized.csv') # all speakers
+```
+
+```{python, include=FALSE}
+def get_vtl(s):
+    deltaf = (np.mean(s.f1_midpt_med_clean)/0.5 + 
+    np.mean(s.f2_midpt_med_clean)/1.5 + 
+    np.mean(s.f3_midpt_med_clean)/2.5 + 
+    np.mean(s.f4_midpt_med_clean)/3.5)/4
+    vtl = 34000/(2*deltaf)
+    return deltaf,vtl
+```
+
+```{python, include=FALSE}
+### perform calculation for adults where we have F1-F4
+adults = formants.loc[(formants.age_yrs=='adult')]
+
+slist = []
+deltaf_list = []
+vtl_list = []
+
+for speaker in adults.spkr.unique():
+  
+  sub_df = adults.loc[(adults.spkr==speaker)]  # select speaker
+
+  get_vtl(sub_df) # where sub_df is the data for an individual speaker
+
+  slist.append(speaker)
+  deltaf_list.append(get_vtl(sub_df)[0])
+  vtl_list.append(get_vtl(sub_df)[1])
+
+# put lists together
+adult_calculations = pd.DataFrame(
+  {'spkr': slist, 
+    'deltaf': deltaf_list, 
+    'vtl': vtl_list
+  })
+
+# merge calculation results with original data
+adult_results = pd.merge(adults, adult_calculations, on='spkr')
+```
+
+```{python, include=FALSE}
+### Now do the same for children, but just using F1-F3
+def get_vtl_child(s):
+    deltaf = (np.mean(s.f1_midpt_med_clean)/0.5 + 
+    np.mean(s.f2_midpt_med_clean)/1.5 +
+    np.mean(s.f3_midpt_med_clean)/2.5)/3
+    vtl = 34000/(2*deltaf)
+    
+    return deltaf,vtl
+```
+
+```{python, include=FALSE}
+children = formants.loc[(formants.age_yrs!='adult')]
+
+cslist = []
+cdeltaf_list = []
+cvtl_list = []
+
+for speaker in children.spkr.unique():
+            
+    sub_df = children.loc[(children.spkr==speaker)]  # select speaker
+    
+    get_vtl_child(sub_df) # where sub_df is the data for an individual speaker
+        
+    cslist.append(speaker)
+    cdeltaf_list.append(get_vtl_child(sub_df)[0]) # and append speaker at the same time
+    cvtl_list.append(get_vtl_child(sub_df)[1])
+
+# put lists together
+child_calculations = pd.DataFrame(
+    {'spkr': cslist, 
+     'deltaf': cdeltaf_list, 
+     'vtl': cvtl_list
+    })
+
+# merge calculation results with original data
+child_results = pd.merge(children, child_calculations, on='spkr')
+```
+
+```{python, include=FALSE}
+### First define a function to calculate the ratios of back cavity length
+# to front cavity length
+# we also measure F2 of [i] which is a standing wave in the pharynx
+# and thus an indicator of pharynx length (in reality this measure of 
+# pharynx length didn't work very well)
+
+def get_bcl(s): 
+    a_f1f2_ratio = (np.mean(s.f1_midpt_med_clean[(s.Phone=='a')])) / (np.mean(s.f2_midpt_med_clean[(s.Phone=='a')])) 
+    a_f2f3_ratio = (np.mean(s.f2_midpt_med_clean[(s.Phone=='a')])) / (np.mean(s.f3_midpt_med_clean[(s.Phone=='a')]))
+    i_f1f2_ratio = (np.mean(s.f1_midpt_med_clean[(s.Phone=='i')])) / (np.mean(s.f2_midpt_med_clean[(s.Phone=='i')]))
+    i_f2f3_ratio = (np.mean(s.f2_midpt_med_clean[(s.Phone=='i')])) / (np.mean(s.f3_midpt_med_clean[(s.Phone=='i')]))
+    u_f2f3_ratio = (np.mean(s.f2_midpt_med_clean[(s.Phone=='u')])) / (np.mean(s.f3_midpt_med_clean[(s.Phone=='u')]))
+    u_f1f3_ratio = (np.mean(s.f1_midpt_med_clean[(s.Phone=='u')])) / (np.mean(s.f3_midpt_med_clean[(s.Phone=='u')])) 
+    return  a_f1f2_ratio,a_f2f3_ratio,i_f1f2_ratio,i_f2f3_ratio,u_f2f3_ratio,u_f1f3_ratio 
+def get_pl(s):
+    phar_length = (3*34000) / (np.mean(s.f2_midpt_med_clean)*4)
+    return phar_length
+```
+
+```{python, include=FALSE}
+# now calculate the ratios between formants for each speaker
+# later, we'll use the ratios, by phone, to predict who is more child-like,
+# and who is more adult-like, in their articulatory strategies
+
+bcslist = [] # speaker list
+a_f1f2_list = []
+a_f2f3_list = []
+i_f1f2_list = []
+i_f2f3_list = []
+u_f2f3_list = []
+u_f1f3_list = []
+
+
+for speaker in formants.spkr.unique():
+            
+    sub_df = formants.loc[(formants.spkr==speaker)]  # select speaker
+    
+    get_bcl(sub_df) # where sub_df is the data for an individual speaker
+        
+    bcslist.append(speaker)
+    a_f1f2_list.append(get_bcl(sub_df)[0])
+    a_f2f3_list.append(get_bcl(sub_df)[1])
+    i_f1f2_list.append(get_bcl(sub_df)[2])
+    i_f2f3_list.append(get_bcl(sub_df)[3])
+    u_f2f3_list.append(get_bcl(sub_df)[4])
+    u_f1f3_list.append(get_bcl(sub_df)[5])
+
+# put lists together
+bcl_calculations = pd.DataFrame(
+    {'spkr': bcslist, 
+     'a_ratiof1f2': a_f1f2_list,
+     'a_ratiof2f3': a_f2f3_list,
+     'i_ratiof1f2': i_f1f2_list,
+     'i_ratiof2f3': i_f2f3_list,
+     'u_ratiof2f3': u_f2f3_list,
+     'u_ratiof1f3': u_f1f3_list
+    })
+```
+
+```{python, include=FALSE}
+# now calculate length of pharynx using F2 of [i]
+# pharyngeal cavity should grow with age, and 
+# the ratio of pharynx:vtl should get larger with age
+# as pharynx grows faster than oral cavity
+
+ees = formants.loc[(formants.Phone=='i')]
+
+plslist = []
+pl_list = []
+
+for speaker in ees.spkr.unique():
+            
+    sub_df = ees.loc[(ees.spkr==speaker)]  # select speaker
+    
+    get_pl(sub_df) # where sub_df is the data for an individual speaker
+        
+    plslist.append(speaker)
+    pl_list.append(get_pl(sub_df)) # and append speaker at the same time
+
+# put lists together
+pl_calculations = pd.DataFrame(
+    {'spkr': plslist, 
+     'phar_length': pl_list 
+    })
+
+# and combine with cavity ratio results
+cavity_results = pd.merge(pl_calculations, bcl_calculations, on='spkr')
+```
+
+```{python, include=FALSE}
+# combine adult and child vtl results
+almost_final_results = pd.concat([child_results, adult_results])
+
+# combine those results with bcl results
+final_results = pd.merge(almost_final_results, cavity_results, on='spkr')
+```
+
+```{python, include=FALSE}
+# spit out vtl measurements
+final_results.to_csv('/Users/Meg/Box Sync/Dissertation/Experiment_1/analysis/analysis_scripts/formants_vtlength_eo.csv', index=False, header=True)
+```
+
+```{r, read in vtl data, include=FALSE}
+# for now we're going to read the df back in using R 
+#but eventually would be good to avoid writing out and reading back in df
+measurements <- read.csv('/Users/Meg/Box Sync/Dissertation/Experiment_1/analysis/analysis_scripts/formants_vtlength_eo.csv')
+
+meta_data <- read.csv('/Users/Meg/Box Sync/Diss_data/Fall_2019_LRAP/Word_lists/speaker_metadata_anonymized.csv', header = TRUE)# read in metadata
+
+vtl_meta <- merge(meta_data, measurements, by = c('spkr', 'age_yrs'))
+
+vtl_data <- vtl_meta %>%
+  select(spkr, age_yrs, gender, Phone, Word, f1_midpt_med_clean, f2_midpt_med_clean,
+         f3_midpt_med_clean, f4_midpt_med_clean, deltaf, vtl, a_ratiof1f2, a_ratiof2f3)
+
+vtl_data$Age <- vtl_data$age_yrs
+
+vtl_data$Age <- ordered(vtl_data$Age, levels = c("4", "5", "6", "7", "8", "9", "10", "adult"))
+```
+
+```{r, get 4-10 tokens per spkr vowel category to use throughout, include=FALSE}
+# first figure out how many tokens for each vowel each speaker has
+# how many tokens by speaker, phone
+peripheral_vls <- vtl_data %>% filter(Phone!='e' & Phone!='o')
+
+vl_ct_f1 <- peripheral_vls %>% # how many F1 measurements, excluding NAs?
+  group_by(Phone, spkr) %>% 
+  filter(!is.na(f1_midpt_med_clean))  %>%
+  summarise(non_na_count_f1 = NROW(f1_midpt_med_clean))
+
+vl_ct_f2 <- peripheral_vls %>%
+  group_by(Phone, spkr) %>% 
+  filter(!is.na(f2_midpt_med_clean)) %>%
+  summarise(non_na_count_f2 = NROW(f2_midpt_med_clean))
+
+       
+
+vls2 <- peripheral_vls %>% 
+  merge(., vl_ct_f1, by=c("Phone", "spkr")) %>% # merge F1 data with original data
+  merge(., vl_ct_f2, by=c("Phone", "spkr")) # merge F2 data
+
+
+
+vls_removed <- vls2 %>% 
+  filter(non_na_count_f1<4 | non_na_count_f2<4) %>% # all categories with less than 4 measurements
+  select(Phone, spkr) %>% 
+  distinct() %>% 
+  nrow # 48 vowel categories will be removed
+
+vls_removed_tbl <- vls2 %>% # how many categories removed? (by phone and age)
+  filter(non_na_count_f1<4 | non_na_count_f2<4) %>%
+  select(spkr, Age, Phone) %>%
+  distinct() %>%
+  group_by(Age, Phone) %>%
+  count() %>%
+  spread(key = "Phone", value = "n") 
+  
+vls_normed_rmvd <- vls2 %>% 
+  filter(non_na_count_f1 > 3 & non_na_count_f2 > 3) # now actually remove all measurements where the vowel category has less than 4 observations
+
+
+
+ # now subset those categories with more than 10 observations
+f1_normed_10minus <- vls_normed_rmvd %>% 
+  mutate(n=non_na_count_f1) %>% 
+  filter(n <= 10) %>%
+  select(-n, -non_na_count_f2, -non_na_count_f1) %>%
+  as.data.frame() 
+
+f1_normed_rmvd <- vls_normed_rmvd %>% 
+  mutate(n=non_na_count_f1) %>% 
+  filter(n > 10) %>% # get all categories with more than 10 observations
+  group_by(Phone, spkr) %>%
+  sample_n(10) %>% # now randomly sample 10 of them
+  select(-n, -non_na_count_f2, -non_na_count_f1) %>% # variable no longer accurate 
+  as.data.frame() %>%
+  rbind(., f1_normed_10minus)
+
+
+
+# same for F2
+f2_normed_10minus <- vls_normed_rmvd %>% 
+  mutate(n=non_na_count_f2) %>% 
+  filter(n <= 10) %>%
+  select(-n, -non_na_count_f2, -non_na_count_f1) %>%
+  as.data.frame()
+
+f2_normed_rmvd <- vls_normed_rmvd %>% 
+  mutate(n=non_na_count_f2) %>% 
+  filter(n > 10) %>% # get all categories with more than 10 observations
+  group_by(Phone, spkr) %>%
+  sample_n(10) %>% # now randomly sample 10 of them
+  select(-n, -non_na_count_f2, -non_na_count_f1) %>%
+  as.data.frame() %>%
+  rbind(., f2_normed_10minus)
+
+# combine
+vls_normed_all <- merge(f1_normed_rmvd, f2_normed_rmvd)
+
+  
+# now recombine with original dataset containing mid-vowels 
+# leaving us with 4-10 observation [a, i, u] and all data from [e, o]
+vls_rmvd2 <- vtl_data %>% 
+  filter(Phone=='e' | Phone=='o') %>%
+  rbind(vls_normed_all)
+```
+
+
+```{r, count how many phones*age rmvd for ch4}
+# we need a quick estimation of the vowels removed for the 40 children analyzed in chapter 4
+ch4_children <- c('c81','c65','c72','c76', 'c56', 'c29', 'c39', 'c59', 'c42', 'c49', 'c55','c33','c26','c22','c44','c53','c32','c47','c37','c21','c38','c11','c57','c34','c45','c8', 'c58','c10','c41','c20','c14','c12','c7','c16','c36','c61','c23','c30','c60','c19')
+
+vls2_ch4 <- vls2[vls2$spkr %in% ch4_children,] # get the vowel data
+
+vls_removed_ch4 <- vls2_ch4 %>% 
+  filter(non_na_count_f1<4 | non_na_count_f2<4) %>% # all categories with less than 4 measurements
+  select(Phone, spkr) %>% 
+  distinct() %>% 
+  nrow #17 tokens removed
+
+# how many phones*age removed?
+vls_removed_tbl_ch4 <- vls2_ch4 %>% # how many categories removed? (by phone and age)
+  filter(non_na_count_f1<4 | non_na_count_f2<4) %>%
+  select(spkr, Age, Phone) %>%
+  distinct() %>%
+  group_by(Age, Phone) %>%
+  count() %>%
+  spread(key = "Phone", value = "n") 
+
+# now create the data to output
+write.csv(vls_removed_tbl_ch4, '/Users/Meg/Box Sync/Dissertation/Experiment_3/results/vls_removed_tbl_ch4.csv', row.names = FALSE)
+```
+
+\subsection{Vowel category dispersion}
+
+### Descriptive statistics of unnormalized data
+
+The first objective in this study is to test how intra-subject and intra-age group vowel variability changes over the course of development from age 4;0 to 10;11. Because we intended to compute vowel variability on an individual speaker and group-level basis, a precautionary data cleaning step was taken before proceeding with the analyses. Any speaker vowel categories that had less than four F1 observations or four F2 observations were removed from analysis (e.g. less than four observations of the F1 of [i] from a given speaker). Since children's voices may be more prone to formant tracking errors due to their higher f0, and thus data removal, we wanted to ensure that any differences between higher voices and lower voices was not due to a data scarcity or abundance in any particular age group. This cleaning procedure helped to standardize the measurements across ages. The reason for differing amounts of tokens per vowel category between speakers was due to the data cleaning procedures and occasional wind interference in the recording, as explained in the methods section. 
+
+```{r, vowel-removed-tbl, echo=FALSE}
+knitr::kable(vls_removed_tbl, caption = 'Number of vowel sets removed by age and phone to standardize measurements across age groups. No categories were removed from the adult speakers.', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+The removal of vowel categories with less than four observations resulted in the removal of 48 vowel categories (see Table \@ref(tab:vowel-removed-tbl) for distribution by age group and vowel). All of the adults had at least four clean F1 and F2 measurements for each of their vowel categories so no adult data were removed. 
+
+To further ensure that we were accurately comparing between age groups - since younger children might be more likely to have data removed for tracking reasons than the adults - we also selected a random subset of 10 observations for those speaker vowel catgories with more than 10 observations. In this way, no individual speaker contributed more than 10 or less than 4 data points for a given vowel. Unless noted otherwise, all analyses were conducted on these vowel categories that contained 4-10 observations.^[Note that this cleaning procedure was not conducted on the mid-vowels [e] and [o] due to data scarcity. Some mid-vowel categories had less than four observations from a given speaker. As a result, while the descriptive statistics report on mid-vowel data, statistical analyses were conducted exclusively on the peripheral vowels.] 
+
+```{r make formant table age*formant, include=FALSE}
+# compute median and mad of each formant for each age; mid vowels are included here
+formant_med <-
+  vls_rmvd2 %>%  # only do this on categories that we have 4-10 observations for 
+  gather(key = "formant", value = "measurement", 
+         f1_midpt_med_clean, 
+         f2_midpt_med_clean, 
+         f3_midpt_med_clean, 
+         f4_midpt_med_clean) %>%
+  group_by(Age, formant) %>%
+  summarize(median = median(measurement, na.rm=TRUE), 
+            mad=mad(measurement, na.rm=TRUE)) %>%
+  mutate(stats = paste(round(median,2), "(", round(mad,0), ")")) %>%
+  select(c(-median, -mad)) %>% 
+  spread(key = "formant", value = "stats")
+
+ct_age <-
+  vls_rmvd2 %>%
+  group_by(Age) %>%
+  tally() 
+
+formant_age <- merge(formant_med, ct_age, by = "Age")
+
+setnames(formant_age, 
+         c( 'f1_midpt_med_clean',
+           'f2_midpt_med_clean', 
+           'f3_midpt_med_clean', 
+           'f4_midpt_med_clean'), 
+         c('F1 (MAD)','F2 (MAD)', 'F3 (MAD)', 'F4 (MAD)'))
+
+# compute range of each formant for each age 
+formant_range_age <-
+  vls_rmvd2 %>%
+  gather(key = "formant", value = "measurement", 
+         f1_midpt_med_clean, 
+         f2_midpt_med_clean, 
+         f3_midpt_med_clean, 
+         f4_midpt_med_clean) %>%
+  group_by(Age, formant) %>%
+  summarize(min = min(measurement, na.rm=TRUE), 
+            max=max(measurement, na.rm=TRUE)) %>%
+  mutate(range = paste(round(min,0), round(max,0), sep = '-')) %>%
+  select(c(-min, -max)) %>% 
+  mutate(formant = forcats::fct_recode(formant, "f2_midpt_med_clean" = "F2")) %>%
+  spread(key = "formant", value = "range")
+
+setnames(formant_range_age, 
+         c('f1_midpt_med_clean','f2_midpt_med_clean', 'f3_midpt_med_clean', 'f4_midpt_med_clean'), 
+         c('F1 range','F2 range', 'F3 range', 'F4 range'))
+
+formant_range_age$`F4 range` <- plyr::revalue(formant_range_age$`F4 range`, c("Inf--Inf"="NA-NA"))
+```
+
+```{r, make-hz-rawdata-plot, echo=FALSE}
+peripheral <- vls_rmvd2 %>% filter(Phone!='e' & Phone!='o') # only look at peripheral vowels
+
+# we make a sep dataset to plot the vowels so that all NAs are removed (we need an F1 and correspnding F2 for the plots)
+set.seed(123)
+sub_vowels <- peripheral %>%
+  group_by(Age, Phone) %>%
+  sample_n(10) %>%
+  select(f1_midpt_med_clean, f2_midpt_med_clean, Phone, Age) %>%
+  na.omit()
+
+hz_plot_elpses <- peripheral %>%
+  select(f1_midpt_med_clean, f2_midpt_med_clean, Phone, Age) %>%
+  na.omit()
+
+hz_plot <- ggplot(sub_vowels, aes(f2_midpt_med_clean, f1_midpt_med_clean, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=3) +
+  facet_wrap(~Age) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  stat_ellipse(data=hz_plot_elpses,  # we still calculate the ellipses on the basis of all data
+               aes(f2_midpt_med_clean, f1_midpt_med_clean), 
+               type = "t", alpha = 0.7) + # you can adjust to display 1SD by setting 'level' = 0.66
+  scale_color_manual(values = c('purple3', 'turquoise4','goldenrod')) +
+  labs(y="F1 (Hz)", x="F2 (Hz)", 
+       #title = "Vowel category development by age, in Hertz: \n adults and children",
+       caption = "Ellipses represent 95% CIs, or approximately 2 SDs of all data, assuming a normal t-distribution. \n Individual points represent random subset of 10 tokens per vowel category.") + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16))
+```
+
+```{r, summary-formant-table, echo=FALSE}
+formant_age <- formant_age[c(2, 3, 4, 5, 6, 7, 1, 8),]
+
+knitr::kable(formant_age, caption = 'Median absolute deviation formant measurements in Hertz for children and adults', booktabs=T, row.names = FALSE) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, formant-range-table, echo=FALSE}
+knitr::kable(formant_range_age, caption = 'Range (min-max) of formant measurements in Hertz for children and adults', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, hz-rawdata-plot, fig.cap='Vowel category development by age, in Hertz: adults and children', echo=FALSE}
+hz_plot
+```
+
+Summary statistics of acoustic vowel measurements by age (in Hz) are presented in Tables \@ref(tab:summary-formant-table) and \@ref(tab:formant-range-table). The F2-F1 space with the three phonemic vowels, by age, is displayed in Figure \@ref(fig:hz-rawdata-plot). (See appendices for individual vowel plots by participant and a plot containing median formant values for phonemic and allophonic vowel categories.) We report on the median and median absolute deviation (MAD) of each formant, instead of the mean and standard deviation (SD), to provide a non-parametric estimate of the variation. The MAD of a distribution is calculated by first computing the median values of the distribution, subtracting this median from each point in the distribution, and finally computing the median of the computed absolute differences. As such, the MAD is relatively less susceptible to the effect of outliers than other measures of dispersion such as SD. 
+
+Table \@ref(tab:summary-formant-table) demonstrates that overall, as anticipated, the median F1, F2, and F3 values, in Hertz, decrease with age as the vocal tract lengthens. Within the children, the median F2 appears to increase slightly in the 7;0 and 8;0 groups, likely due to the concentration of [u] at higher F2 frequencies. The adult women still exhibit a much lower median F2 than the any of the child age groups. Also as anticipated, the median formant value increases from F1 to F3/F4 across all participants (again F4 was not tracked for the children). 
+
+Between-speaker variability, quantified as the MAD, also decreases with age from roughly 300Hz for F1 in the 4;0 group to less than 130 Hz (for F1) in the adults. Notably, the variability even decreases between the older children: for example, for F1-F3, the MAD decreases between the 9;0 group and the 10;0 group, and again decreases between the 10;0 group and the adults. This pattern of variability reduction with age was not always apparent in the higher formants, however. The higher variability in F1 could be due to harmonic spacing in the lower frequencies. In fact, all age groups from 6;0-9;0 were more variable than the 4;0 and 5;0 groups along the F2 dimension. This is somewhat surprising since young children typically master jaw control (correlated with F1) earlier than horizontal lingual control (correlated with F2). But again the higher median F2 variability simply could be reflecting a shifted vowel space. For F3, variability does not appear to decrease notably by age until the 10;0 and adult group. 
+
+These results appear to confirm previous work on vowel development in English (Lee et al., 1999) and French (Ménard et al., 2007): younger children are more variable than adults. However, I wanted to ensure that the acoustic variability in the children's speech was due to articulatory instability and differences between acoustic-articulatory mappings in children, and not to the higher formant frequency ranges that the children speak in. In other words, in unnormalized data, child speech could simply _appear_ to be more variable because a given amount of acoustic and/or articulatory slop at higher frequencies would result in less auditory perturbation than the same acoustic slop at lower frequencies.
+
+### Descriptive statistics of $\Delta$F-normalized data
+
+To ensure that variability in the children's vowel production was not simply due to the frequency ranges of the children's voices, the vowel data were normalized and the variation of each vowel category was computed. The vowels were normalized with the $\Delta$F formant frequency scaling measure reported in the methods. As the calculation of $\Delta$F requires estimation of vocal tract length, the following section begins with  a description of the distribution of vocal tract lengths computed from F1-F3 for the children and F1-F4 for the adults, and the ratio between formants ($\Delta$F) by age in this population. (Vocal tract length and formant ratios were computed on all vowels /a, i, e, o, u/). Then, descriptive statistics of formant measurements resulting from the $\Delta$F normalization are presented and within-category dispersion of the phonemic vowels is again evaluated over the course of development. 
+
+
+```{r, make vtl table, include=FALSE}
+vtl_data$Age <- factor(vtl_data$age_yrs,
+                  levels = c("4","5","6", "7", "8", "9", "10", "adult"))
+
+# vtl and ratio between formants (deltaf)
+vtl_table <-
+  vtl_data %>%
+  group_by(Age) %>%
+  distinct(vtl, deltaf) %>% # only get unique entries 
+  mutate(vtl_mean = round(mean(vtl),2)) %>%
+  mutate(vtl_sd = round(sd(vtl),2)) %>%
+  mutate(Vocal_tract_length = paste(vtl_mean, "(", vtl_sd, ")")) %>%
+  mutate(deltaf_mean = round(mean(deltaf),2)) %>%
+  mutate(deltaf_sd = round(sd(deltaf),2)) %>%
+  mutate(DeltaF_Hz = paste(deltaf_mean, "(", deltaf_sd, ")")) %>%
+  select(-vtl, -deltaf, -vtl_mean, -vtl_sd, -deltaf_mean, -deltaf_sd) %>%
+  distinct() %>%
+  arrange(Age) # to order appropriately by age b/c a grouping variable
+
+setnames(vtl_table, 
+         c('Vocal_tract_length','DeltaF_Hz'), 
+         c('Vocal tract length (SD)','DeltaF (SD)'))
+```
+
+```{r, vtl-length-table, echo=FALSE}
+knitr::kable(vtl_table, caption = 'Average vocal tract length and ratio between formant frequencies in Hertz (DeltaF) by age', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, vtl-length-plot, echo=FALSE, fig.cap='Average vocal tract length \n by age: adults and children'}
+vtl_plot <- vtl_data %>% distinct(vtl, Age,.keep_all = TRUE)
+  
+ggplot(vtl_plot, aes(x=Age, y=vtl)) + 
+  geom_boxplot(outlier.shape=NA,colour='gray') +
+  geom_jitter(aes(colour=gender, shape=gender),
+              width = .05, alpha=0.75, size=3) +
+  scale_color_manual(values = c('slateblue3', 'tomato3')) +
+  coord_flip() +
+  labs(y="Vocal Tract Length (cm)", x="Age (years)") +
+       #title = "Average vocal tract length (cm) \n by age: adults and children") + 
+  theme(axis.text.x = element_text(face="bold", size=13),
+        axis.text.y = element_text(face ='bold', size=13),
+        axis.title=element_text(face="bold", size=16),
+        title=element_text(face="bold", size=16))  
+```
+
+```{r, med-split-artics, include=FALSE}
+# do a median split of children based on ratio of F1:F2 and F2:F3 for [a]
+# put kids into the "good/adult-like" articulator group 
+# and a "bad/child-like" articulator group
+# kids who have a smaller ratio are more adult-like in the vtl morphology/constrictions
+
+vtl_data_kids <- vtl_data %>%
+  filter(Age!='adult') %>% # we only want to compute medians over the child data
+  #drop_na(a_ratiof1f2, a_ratiof2f3) %>% # some speakers don't have data for some formants of some vowels
+  mutate(med_f1f2_a = median(a_ratiof1f2)) %>% # these medians are calculated over all kids bc it's a split
+  mutate(med_f2f3_a = median(a_ratiof2f3)) %>%
+
+  #mutate(med_f1f2_i = median(i_ratiof1f2)) %>%
+  #mutate(med_f2f3_i = median(i_ratiof2f3)) %>%
+  
+  #mutate(med_f2f3_u = median(u_ratiof2f3)) %>%
+  #mutate(med_f1f3_u = median(u_ratiof1f3)) %>%
+  ungroup() %>%
+  group_by(spkr) %>% 
+   mutate(a_articulator = ifelse((a_ratiof1f2 > med_f1f2_a & a_ratiof2f3 < med_f2f3_a), "child-like articulator", "adult-like articulator"))  # must satisfy *both* criteria to be classified as child-like
+  
+   #mutate(i_articulator = ifelse((i_ratiof1f2 > med_f1f2_i & i_ratiof2f3 < med_f2f3_i), "child-like articulator", "adult-like articulator")) %>% #according to how they perform on [i]
+   
+   #mutate(u_articulator = ifelse((u_ratiof2f3 > med_f2f3_u & u_ratiof1f3 > med_f1f3_u), "child-like articulator", "adult-like articulator")) # according to how they perform on [u]
+
+# combine with adult data
+vtl_data_adult <- vtl_data %>%
+  filter(Age=='adult')
+
+vtl_data2 <- bind_rows(vtl_data_adult, vtl_data_kids)
+
+# how many kids of each age are in the child-like versus adult-like articulatory configurations?
+age_ct_a <- vtl_data2 %>%
+  distinct(spkr, .keep_all = TRUE) %>%
+  filter(Age!='adult' & spkr!='c64') %>% # c64 only has one valid [a] token so remove from analysis
+  group_by(a_articulator, Age) %>%
+  count() %>%
+  spread(key='a_articulator', value='n') %>%
+  group_by(Age)
+
+total <- vtl_data2 %>%
+  distinct(spkr, .keep_all = TRUE) %>%
+  filter(Age!='adult' & spkr!='c64') %>%
+  group_by(Age) %>%
+  count(name = 'total') 
+
+med_age_ct_a <- merge(age_ct_a, total, by = "Age")
+
+# merge with cleaned 4-10 observation vowel dataset so that we get info about articulator status in the dataset we're using
+vls_normed_rmvd2 <- merge(vls_rmvd2, vtl_data2, by=c("spkr", "age_yrs", "gender", "Phone", "Word", "f1_midpt_med_clean", "f2_midpt_med_clean", "f3_midpt_med_clean", "f4_midpt_med_clean", "vtl", "deltaf", "a_ratiof1f2", "a_ratiof2f3", "Age"))
+```
+
+```{r, deltaf-plot, include=FALSE, fig.cap='Average formant ratio (deltaF) development \n by age: adults and children'}
+deltaf_plot <- vtl_data2 %>% distinct(deltaf, Age,.keep_all = TRUE)
+  
+  
+ggplot(deltaf_plot, aes(x=Age, y=deltaf)) + 
+  geom_boxplot(outlier.shape=NA,colour='gray') +
+  geom_jitter(aes(colour=gender, shape=gender),
+              width = .05, alpha=0.75, size=3) +
+  scale_color_manual(values = c('slateblue3', 'tomato3')) +
+  coord_flip() +
+  labs(y="Average formant ratio (Hz) (deltaF)", x="Age (years)") +
+       #title = "Average formant ratio (deltaF) development \n by age: adults and children") + 
+  theme(axis.text.x = element_text(face="bold", size=13),
+        axis.text.y = element_text(face ='bold', size=13),
+        axis.title=element_text(face="bold", size=16),
+        title=element_text(face="bold", size=16))  
+```
+
+Table \@ref(tab:vtl-length-table) summarizes vocal tract length and the ratio between formant frequencies ($\Delta$F) by age (also see Figure \@ref(fig:vtl-length-plot)). Unsurprisingly, the estimated average vocal tract length increases with age from roughly 12 cm in the four-year-olds to between 13 and 15 cm in the ten-year-olds and adults. Due to the lengthening of the vocal folds and vocal tract, the average ratio between formant frequencies ($\Delta$F) also decreases with age as the average formant frequencies lower. The vocal tract lengths computed acoustically here resemble the measurements taken from magnetic resonance images of vocal tract development in North American children (Vorperian et al., 2005). These acoustically-derived vocal tract length measures are slightly longer than those measured from articulatory imaging; acoustically-derived measures overreport vocal tract lengths since the effect of the end of the tube is just outside of the lips for those measures.  
+
+
+### Measuring within-category variability
+
+```{r, normalize vowels a la deltaF, include=FALSE}
+# divide every single formant measurement by the calculated deltaf; vowel and formant intrinsic
+# we normalize all five vowels here
+vls_normed_rmvd2$f1_delta_norm <- vls_normed_rmvd2$f1_midpt_med_clean/vls_normed_rmvd2$deltaf # nas are the thrown out tokens
+vls_normed_rmvd2$f2_delta_norm <- vls_normed_rmvd2$f2_midpt_med_clean/vls_normed_rmvd2$deltaf 
+vls_normed_rmvd2$f3_delta_norm <- vls_normed_rmvd2$f3_midpt_med_clean/vls_normed_rmvd2$deltaf 
+vls_normed_rmvd2$f4_delta_norm <- vls_normed_rmvd2$f4_midpt_med_clean/vls_normed_rmvd2$deltaf 
+
+# remove na outlier tokens 
+delta_adults <- vls_normed_rmvd2 %>% 
+  filter(Age=='adult') %>%
+  select(f1_delta_norm, f2_delta_norm, f3_delta_norm, f4_delta_norm, spkr, Phone)
+  #na.omit()  # remove nas (outlier measurements that we threw out)
+
+delta_kids <- vls_normed_rmvd2 %>% 
+  filter(Age!='adult') %>%
+  select(f1_delta_norm, f2_delta_norm, f3_delta_norm, spkr, Phone)
+  #na.omit()  # remove nas (outlier measurements that we threw out)
+delta_kids$f4_delta_norm = NA # add f4 column to child data
+
+delta_all <- rbind(delta_adults, delta_kids)
+delta_normed <- merge(delta_all, vls_normed_rmvd2, by = c("spkr", "Phone", "f1_delta_norm", "f2_delta_norm", "f3_delta_norm", "f4_delta_norm"))
+```
+
+```{r, measure delta dispersion via CoV, include=FALSE}
+# we only calculate on peripheral vowels
+# calculate group-level CoV
+delta_normed_rmvd2 <- delta_normed %>%
+  filter(Phone!='e' & Phone!='o') %>%
+  group_by(Age, Phone) %>%    # calculate separately for each age group, including adults, and vowel (a, i, u)
+  mutate(F1_CoV = (sd(f1_delta_norm,na.rm=TRUE)) / (mean(f1_delta_norm, na.rm=TRUE))) %>% 
+  mutate(F2_CoV = (sd(f2_delta_norm, na.rm=TRUE)) / (mean(f2_delta_norm, na.rm=TRUE))) 
+
+# calculate individual-level CoV 
+delta_spkr_mean <- delta_normed %>%
+  filter(Phone!='e' & Phone!='o') %>%
+  group_by(Age, Phone, spkr) %>%    # calculate separately for each speaker, including adults
+  mutate(F1_CoV = (sd(f1_delta_norm,na.rm=TRUE)) / (mean(f1_delta_norm,na.rm=TRUE))) %>% 
+  mutate(F2_CoV = (sd(f2_delta_norm,na.rm=TRUE)) / (mean(f2_delta_norm,na.rm=TRUE)))
+```
+
+```{r, delta-disp-tbl-group, echo=FALSE}
+# for F1
+delta_COV_table_f1 <- delta_normed_rmvd2 %>%
+  filter(Phone!='e' & Phone!='o') %>%
+  select(Age, Phone, F1_CoV) %>%
+  distinct() %>%
+  spread(key = "Phone", value = "F1_CoV") %>%
+  mutate(a=round(a,2),
+         i=round(i,2),
+         u=round(u,2))
+
+# for F2
+delta_COV_table_f2 <- delta_normed_rmvd2 %>%
+  filter(Phone!='e' & Phone!='o') %>%
+  select(Age, Phone, F2_CoV) %>%
+  distinct() %>%
+  spread(key = "Phone", value = "F2_CoV") %>%
+  mutate(a=round(a,2),
+            i=round(i,2),
+            u=round(u,2))
+
+delta_table_final <- merge(delta_COV_table_f1, delta_COV_table_f2, by=c("Age"))
+
+colnames(delta_table_final) <- c("Age","[a]", "[i]", "[u]", "[a] ", "[i] ", "[u] ")
+delta_table_final <- data.table::setDT(delta_table_final)
+
+delta_table_final <- delta_table_final[c(2, 3, 4, 5, 6, 7, 1, 8),]
+
+
+knitr::kable(delta_table_final, caption = 'Group-level average CoV by formant and vowel for children and adults', booktabs=T) %>% 
+  kable_styling() %>%
+  add_header_above(c(" " = 1, "F1" = 3, "F2" = 3)) %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, plot-raw-deltaf-data, echo=FALSE, fig.cap='DeltaF-normalized vowels by age: adults and children'}
+# randomly select 10 tokens by phone, age to visualize points
+delta_periph <- delta_normed_rmvd2 %>% 
+  filter(Phone!='e' & Phone!='o') 
+
+sub_delta_normed <- delta_periph %>%
+  group_by(Age, Phone) %>%
+  sample_n(10) %>%
+  select(f1_delta_norm, f2_delta_norm, Phone, Age) %>%
+  na.omit()
+
+# we make a sep dataset to plot the vowels so that all NAs are removed (we need an F1 and correspnding F2 for the plots)
+delta_plot_elpses <- delta_periph %>%
+  select(f1_delta_norm, f2_delta_norm, Phone, Age) %>%
+  na.omit()
+
+ggplot(sub_delta_normed, aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=3) +
+  facet_wrap(~Age) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  stat_ellipse(data=delta_plot_elpses, 
+               aes(f2_delta_norm, f1_delta_norm), 
+               type = "t", alpha = 0.7) + # you can adjust to display 1SD by setting level = 0.66
+  scale_color_manual(values = c('purple3', "turquoise4", 'goldenrod')) +
+  labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"), 
+       caption = "Ellipses represent 95% CIs, or approximately 2 SDs of all data, assuming a normal t-distribution. \n Individual points represent random subset of 10 tokens per vowel category.") + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=13),
+  axis.text.y = element_text(face ='bold', size=13),
+  axis.title=element_text(face="bold", size=16),
+  strip.text = element_text(face="bold", size=9),
+  title=element_text(face="bold", size=16),
+  plot.caption = element_text(size=9)) 
+```
+
+```{r, delta-disp-tbl-spkr-f1, echo=FALSE}
+# we already have individual CoV calculated from above
+delta_spkr_tbl <- delta_spkr_mean %>%  
+  group_by(Age, Phone) %>%
+  select(Age, Phone, F1_CoV, F2_CoV) %>%
+  distinct() %>%
+  na.omit %>% # one 9;0 and one adult only have one [a] token over which COV was calculated so those emerge as NA
+  summarize(F1_mean=mean(F1_CoV),
+            F1_sd=sd(F1_CoV),
+            F1_min=min(F1_CoV),
+            F1_max=max(F1_CoV),
+            F2_mean=mean(F2_CoV),  
+            F2_sd=sd(F2_CoV),
+            F2_min=min(F2_CoV),
+            F2_max=max(F2_CoV)) %>%
+  mutate(F1_stats = paste(round(F1_mean,2), "(", round(F1_sd,2), ")", round(F1_min,2), "-", round(F1_max,2))) %>%
+  mutate(F2_stats = paste(round(F2_mean,2), "(", round(F2_sd,2), ")", round(F2_min,2), "-", round(F2_max,2))) %>%
+  select(-F1_min, -F2_min, -F1_max, -F2_max, -F1_sd, -F2_sd, -F1_mean, -F2_mean) 
+
+# F1 table
+delta_spkr_tbl_f1 <- delta_spkr_tbl %>%
+  select(-F2_stats) %>%
+  spread(key = "Phone", value = "F1_stats") 
+
+# F2 table
+delta_spkr_tbl_f2 <- delta_spkr_tbl %>%
+  select(-F1_stats) %>%
+  spread(key = "Phone", value = "F2_stats") 
+
+
+colnames(delta_spkr_tbl_f1) <- c("Age","[a] mean (SD) range", "[i]", "[u]") # the 4;0 only have 1-2 tokens 
+colnames(delta_spkr_tbl_f2) <- c("Age","[a] mean (SD) range", "[i]", "[u]") # the 4;0 only have 1-2 tokens 
+
+delta_table_spkr_f1 <- data.table::setDT(delta_spkr_tbl_f1)
+delta_table_spkr_f2 <- data.table::setDT(delta_spkr_tbl_f2)
+
+#delta_table_spkr_f1 <- delta_table_spkr_f1[c(2, 3, 4, 5, 6, 7, 1, 8),]
+#delta_table_spkr_f2 <- delta_table_spkr_f2[c(2, 3, 4, 5, 6, 7, 1, 8),]
+
+
+knitr::kable(delta_table_spkr_f1, caption = 'Individual-level CoV by formant and vowel for children and adults:F1', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, delta-disp-tbl-spkr-f2, echo=FALSE}
+knitr::kable(delta_table_spkr_f2, caption = 'Individual-level CoV by formant and vowel for children and adults:F2', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, delta-disp-fig, fig.cap="Group-level CoV by age and phone", echo=FALSE}
+delta_normed_plot_grp <- delta_normed_rmvd2 %>% #for group-level CoV
+  filter(Phone!='o' & Phone!='e') %>%
+  select(Age, Phone, F1_CoV, F2_CoV) %>%
+  distinct() %>%
+    gather(key = "Formant", value = "measurement",
+         F1_CoV,
+         F2_CoV)
+
+delta_normed_plot_spkr <- delta_spkr_mean %>% # for individual CoV
+  filter(Phone!='o' & Phone!='e') %>%
+  select(Age, Phone, spkr, F1_CoV, F2_CoV) %>%
+  distinct() %>%
+  gather(key = "Formant", value = "measurement",
+         F1_CoV,
+         F2_CoV)
+
+
+ggplot(delta_normed_plot_spkr, aes(Age, measurement, color = Phone, label=Phone)) + 
+  geom_jitter(aes(shape=Phone),size=2, alpha=.3, width = .1) +
+  geom_point(data=delta_normed_plot_grp, aes(shape=Phone), size=4, alpha=1) + 
+  facet_wrap(~Formant) + 
+  scale_color_manual(values = c('purple3', 'turquoise4', 'goldenrod')) +
+   labs(y="CoV",
+       #title = "CoV by age, phone, and formant",
+       caption = "Where a higher y-value indicates greater dispersion/variability \n Large shapes represent age group CoV; raw data represent individual CoV") +
+  ylim(0,0.6) + 
+  theme(axis.text.x = element_text(face="bold", size=11),
+  axis.text.y = element_text(face ='bold', size=11),
+  axis.title = element_text(face="bold", size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.subtitle = element_text(size=7),
+  title=element_text(face="bold", size=13))
+```
+
+The comparison of within-category variability across age groups was conducted on the $\Delta$F-normalized formant values. Figure \@ref(fig:plot-raw-deltaf-data) plots the median $\Delta$F-normalized formant values. (See Tables \@ref(tab:deltaf-measurement-table-a) - \@ref(tab:deltaf-measurement-table-u) in the appendices for descriptive statistics of $\Delta$F-normalized formant values.)  As the vowel plots demonstrate, speakers tend to have larger within-category dispersion for [a] and [u] than [i]. However, the pattern by age is less identifiable. With speaker-intrinsic information (ratio between formant frequencies on a by-speaker basis) factored out, which is what $\Delta$F does, adults appear to have somewhat tighter, more compact acoustic vowel categories for some vowels, particularly [i], than even the eldest children. Other vowels show little difference by age, or, in the case of [u], do not seem to follow a strict linear pattern of decreased variation with age.
+
+To better ascertain the developmental pattern of vowel variability, we computed the acoustic dispersion of each vowel category across the age groups. To do so, we followed previous work in computing the Coefficient of Variation (CoV) for F1 and F2 of each vowel category in the $\Delta$F-normalized formants. The CoV is the ratio of the standard deviation of the mean to the mean of each phoneme category (Bradlow, 1995; Eguchi & Hirsch, 1965; Lee et al., 1999). Again, this was computed individually for F1 and F2 of each phoneme for each age group.
+
+Recall that these measurements were made over vowel categories containing 4-10 observations per speaker. The group- and individual speaker-level CoVs computed over *all* data, including those categories with less than 4 data points, are included in the appendices (CoV by age group: Table \@ref(tab:delta-disp-tbl-group-alldata) and CoV by individual speaker: Tables \@ref(tab:delta-disp-tbl-spkr-alldata-f1) and \@ref(tab:delta-disp-tbl-spkr-alldata-f2)); overall we did not notice a large difference between the CoVs computed over 4-10 tokens per vowel category and those computed over the entire dataset. However, we felt that standardizing the number of tokens per category would result in the least bias across the age groups.
+
+The average CoV for F1 and F2 by phone and age group is listed in Table \@ref(tab:delta-disp-tbl-group) and plotted in Figure \@ref(fig:delta-disp-fig) (following Lee et al, (1999), we report the average CoV measurements and their SDs, not the median or MAD): the results demonstrate that the CoV for by phone and formant 1) varies by phone and 2) does not always decrease linearly with age. For the F1 of [a], the CoV does not appear to decrease by age - the average [a] CoV for the adults was 0.27 but 0.17 for the 8;0 group. The F1 CoV for [u] is highest for the 7;0-8;0 groups, again not showing clear evidence of a linear decrease in variability. The F2 CoV for [i] and [a] show limited change with age, though the CoV is smallest for [i] in the adults. 
+
+We additionally computed a CoV on a by-speaker basis. This resulted in a single coefficient for F1 and F2 from each speaker, for each vowel. The mean of these CoVs, SDs, and ranges are listed in Tables \@ref(tab:delta-disp-tbl-spkr-f1) and \@ref(tab:delta-disp-tbl-spkr-f2). These individual speaker-level CoVs are also plotted as the raw data in Figure \@ref(fig:delta-disp-fig). Once we computed the CoV on an individual level, we then had a datapoint for each speaker's three vowel categories which we used to fit a series of models predicting the CoVs for F1 and F2. 
+
+### Fitting models to predict within-category variability
+
+For the CoV model fitting, we fit generalized linear mixed effects models (GLMMs) because the outcome variable - the individual speaker level CoV - was necessarily non-negative and right-skewed. Gamma GLMMs were fit using a log linking function to appropriately model the skewed, non-Gaussian distribution of the residual. A total of six models were fit, one for each combination of formant (F1 and F2) and phone (/a, i, u/). The model fitting procedure followed the same procedure for all models: first the baseline model, with just the random effect of **Speaker**, was fit. Then, the parameters of interest were added, with the primary parameter of interest (**Age Group**) added last. First, **Gender** was added, then **Age Group** (4, 5, 6, 7, 8, 9, 10, adult). The effect of **Gender** did not improve upon any of the baseline (with only **Speaker**) model fits. This suggests that individual speaker-level CoV does not reliably differ between any of the studied age groups in this population and the parameter **Gender** was not further analyzed. 
+
+The parameter **Age Group** improved upon baseline model fits for two models: the model predicting F2 of [i] and the model predicting F1 of [u]. The model summary for the F2 of [i] is shown in Table \@ref(tab:f2-i-model) and the summary for the F1 of [u] is in Table \@ref(tab:f1-u-model). As the beta coefficients in the model summaries demonstrate, there were some differences by age group in category dispersion. However, these differences only approached significance reliably - meaning that the age groups significantly differed from the adults in the expected direction - in the F2 of [i] model. Furthermore, as the beta coefficients demonstrate, the children's CoV values did not decrease linearly with age, with older children necessarily demonstrating more adult-like dispersion. 
+
+```{r, fit models, include=FALSE}
+# change the reference level to adults b/c that's our questions of interest
+delta_spkr_mean$age_yrs <- relevel(delta_spkr_mean$age_yrs, ref = "adult")
+
+# # do sep model for each phone
+a <- delta_spkr_mean %>% 
+  filter(Phone=='a') %>%
+  distinct(spkr, .keep_all = TRUE)
+ 
+# fit glmms because the data are non-negative and right-skewed
+# F1:a
+f1_a <- glmmTMB(F1_CoV ~ 
+                (1|spkr), 
+                data=a,  
+                family="Gamma"(link="log"))
+
+f1_a2 <- glmmTMB(F1_CoV ~ 
+                gender + 
+                (1|spkr), 
+                data=a,  
+                family="Gamma"(link="log"))
+anova(f1_a, f1_a2) # doesn't improve
+
+f1_a3 <- glmmTMB(F1_CoV ~ 
+                age_yrs + 
+                (1|spkr), 
+                data=a,  
+                family="Gamma"(link="log"))
+anova(f1_a3, f1_a) # doesn't improve under alpha .05
+summary(f1_a3) # only one age group significant within model; doesn't improve upon baseline
+
+# f2:a
+f2_a <- glmmTMB(F2_CoV ~ 
+                (1|spkr), 
+                data=a,  
+                family="Gamma"(link="log"))
+
+f2_a2 <- glmmTMB(F2_CoV ~ 
+                gender + 
+                (1|spkr), 
+                data=a,  
+                family="Gamma"(link="log"))
+anova(f2_a, f2_a2) # doesn't improve under alpha .05
+
+f2_a3 <- glmmTMB(F2_CoV ~ 
+                age_yrs + 
+                (1|spkr), 
+                data=a,  
+                family="Gamma"(link="log"))
+anova(f2_a, f2_a3) # doesn't improve
+summary(f2_a3) # no age groups significant within model
+
+# f1:i
+i <- delta_spkr_mean %>% 
+  filter(Phone=='i') %>%
+  distinct(spkr, .keep_all = TRUE)
+
+f1_i <- glmmTMB(F1_CoV ~ 
+                (1|spkr), 
+                data=i,  
+                family="Gamma"(link="log"))
+
+f1_i2 <- glmmTMB(F1_CoV ~ 
+                gender + 
+                (1|spkr), 
+                data=i,  
+                family="Gamma"(link="log"))
+anova(f1_i, f1_i2) # doesn't improve 
+
+f1_i3 <- glmmTMB(F1_CoV ~ 
+                age_yrs + 
+                (1|spkr), 
+                data=i,  
+                family="Gamma"(link="log"))
+anova(f1_i, f1_i3) # doesn't improve
+summary(f1_i3) # no age groups significant within model
+
+#f2:i
+f2_i <- glmmTMB(F2_CoV ~ 
+                (1|spkr), 
+                data=i,  
+                family="Gamma"(link="log"))
+
+f2_i2 <- glmmTMB(F2_CoV ~ 
+                gender + 
+                (1|spkr), 
+                data=i,  
+                family="Gamma"(link="log"))
+summary(f2_i2) # not significant within model
+
+f2_i3 <- glmmTMB(F2_CoV ~ 
+                age_yrs + 
+                (1|spkr), 
+                data=i,  
+                family="Gamma"(link="log"))
+summary(f2_i3) # multiple age groups significant within model; ***report results
+
+
+u <- delta_spkr_mean %>% 
+  filter(Phone=='u') %>%
+  distinct(spkr, .keep_all = TRUE)
+
+# u:f1
+f1_u <- glmmTMB(F1_CoV ~ 
+                (1|spkr), 
+                data=u,  
+                family="Gamma"(link="log"))
+
+f1_u2 <- glmmTMB(F1_CoV ~ 
+                gender + 
+                (1|spkr), 
+                data=u,  
+                family="Gamma"(link="log"))
+anova(f1_u, f1_u2) # gender doesn't improve
+
+f1_u3 <- glmmTMB(F1_CoV ~ 
+                age_yrs + 
+                (1|spkr), 
+                data=u,  
+                family="Gamma"(link="log"))
+anova(f1_u, f1_u3) # improves - ***report results
+summary(f1_u3) # several age groups significant or approach significance 
+
+# u:f2
+f2_u <- glmmTMB(F2_CoV ~ 
+                (1|spkr), 
+                data=u,  
+                family="Gamma"(link="log"))
+
+f2_u2 <- glmmTMB(F2_CoV ~ 
+                gender + 
+                (1|spkr), 
+                data=u,  
+                family="Gamma"(link="log"))
+anova(f2_u, f2_u2) # doesn't improve
+
+f2_u3 <- glmmTMB(F2_CoV ~ 
+                age_yrs + 
+                (1|spkr), 
+                data=u,  
+                family="Gamma"(link="log"))
+anova(f2_u, f2_u3) # doesn't improve 
+summary(f2_u3) # no age groups sig within model
+```
+
+```{r, prepare cov model tables, include=FALSE}
+cov_glmms <- rbind(broom.mixed::tidy(f2_i3, 
+                                 effects = c("fixed"), 
+                                 conf.int = TRUE) %>% 
+                 mutate(model = "f2_i_model"),
+               broom.mixed::tidy(f1_u3, 
+                                 effects = c("fixed"), 
+                                 conf.int = TRUE) %>% 
+                 mutate(model = "f1_u_model"))               
+               
+cov_glmms$term <- plyr::mapvalues(cov_glmms$term, 
+                                     from = c("(Intercept)", 
+                                              "age_yrs10", 
+                                              "age_yrs4", 
+                                              "age_yrs5",
+                                              "age_yrs6",
+                                              "age_yrs7",
+                                              "age_yrs8",
+                                              "age_yrs9"
+                                        ), 
+                                     to = c("Intercept", 
+                                            "10", 
+                                            "4", 
+                                            "5", 
+                                            "6",
+                                            "7",
+                                            "8",
+                                            "9"
+                                            ))
+cov_glmms$conf.high <- round(as.numeric(cov_glmms$conf.high),2)
+cov_glmms$conf.low <- round(as.numeric(cov_glmms$conf.low),2)
+cov_glmms$'95% CI' <- paste(cov_glmms$conf.high,cov_glmms$conf.low,sep=',')
+
+
+cov_glmms <- cov_glmms %>% rename(
+    S.E. = std.error,
+    z.statistic = statistic) %>%
+  select(c(-effect, -component, -conf.high, -conf.low))
+```
+
+```{r, f2-i-model, echo=FALSE}
+cov_glmms$'95% CI' <- as.factor(cov_glmms$'95% CI')
+papaja::apa_table(cov_glmms %>% 
+                  filter(model=='f2_i_model') %>% 
+                  select(-model), 
+                  caption="Model predicting CoV for F2 of [i]") 
+```
+
+```{r, f1-u-model, echo=FALSE}
+cov_glmms$'95% CI' <- as.factor(cov_glmms$'95% CI')
+papaja::apa_table(cov_glmms %>% 
+                  filter(model=='f1_u_model') %>% 
+                  select(-model), 
+                  caption="Model predicting CoV for F1 of [u]") 
+```
+
+Thus, although there are some trends apparent in the descriptive statistics of the individual-level and group-level CoVs, as well as in the vowel plots, overall the modeling suggests that category dispersion does not differ significantly between the adults and the child age groups, with the exception of the F2 of [i]. Furthermore, when there are statistically reliable differences between adults and children for within-category dispersion, these differences do not diminish with age.   
+
+## Compensation for vocal tract morphology
+
+Having addressed the first objective of this study, the secondary research question asks if uniform formant frequency scaling adequately factors out anatomical differences between children and adults. If a comparison of uniform and non-uniform formant frequency scaling techniques results in similar formant measurements, this may demonstrate that children compensate articulatorily for their vocal tract morphology during vowel production. If, however, a comparison of the two scaling techniques shows large differences between child and adult within-category variability, this suggests that there are additional sources that explain the differences between adults and children, beyond phone identity and anatomical difference. 
+
+To evaluate this question, the vowel data were normalized using two formant scaling techniques - one uniform ($\Delta$F) and one non-uniform (Lobanov), as previously described. For this analysis, the allophonic vowels [e, o] are included, in addition to the phonemic vowels /a, i, u/. The difference in category variability between the scaling techniques is then compared: if there is additional, unexplained variability present in the Lobanov-normalized vowels - meaning there is additional variability after scaling the formants uniformly (accounting for vocal tract length) and factoring in phone identity - then these results would suggest that another factor, such as articulatory configuration, may differ between the speakers. Such a result would suggest the children may not always compensate for the ratio between their supraglottal cavities during vowel production.
+
+The vowel data were first normalized using the Lobanov scaling technique. Figure \@ref(fig:plot-raw-lobanov-data) plots the median Lobanov-normalized formant values (for phonemes) by phone and age group and Tables \@ref(tab:lobanov-meas-tbl-a)-\@ref(tab:lobanov-meas-tbl-u) in the appendices list the descriptive values for the phonemes /a, i, u/. See Tables \@ref(tab:deltaf-measurement-table-a)-\@ref(tab:deltaf-measurement-table-u) in the appendices, and Figure \@ref(fig:plot-raw-deltaf-data) in the previous section, for the $\Delta$F-normalized formant values. 
+
+
+```{r normalize vowels a la lobanov, include=FALSE}
+# we normalize all five vowels  
+lob_kids <- vls_normed_rmvd2 %>% 
+  filter(Age!='adult') %>% 
+  group_by(spkr) %>%   #  don't include 'Phone' here
+  select(Phone, spkr,
+         f1_midpt_med_clean, 
+         f2_midpt_med_clean, 
+         f3_midpt_med_clean) %>%
+  mutate(lob_f1= ((f1_midpt_med_clean - mean(f1_midpt_med_clean,na.rm=TRUE)) / sd(f1_midpt_med_clean,na.rm=TRUE))) %>%
+  mutate(lob_f2= ((f2_midpt_med_clean - mean(f2_midpt_med_clean,na.rm=TRUE)) / sd(f2_midpt_med_clean,na.rm=TRUE))) %>%  
+  mutate(lob_f3= ((f3_midpt_med_clean - mean(f3_midpt_med_clean,na.rm=TRUE)) / sd(f3_midpt_med_clean,na.rm=TRUE))) 
+
+lob_adults <- vls_normed_rmvd2 %>% 
+  filter(Age=='adult') %>%
+  group_by(spkr) %>%   # don't include 'Phone' here
+  select(Phone, spkr,
+         f1_midpt_med_clean, 
+         f2_midpt_med_clean, 
+         f3_midpt_med_clean, 
+         f4_midpt_med_clean) %>%
+  mutate(lob_f1= ((f1_midpt_med_clean - mean(f1_midpt_med_clean,na.rm=TRUE)) / sd(f1_midpt_med_clean,na.rm=TRUE))) %>%  
+  mutate(lob_f2= ((f2_midpt_med_clean - mean(f2_midpt_med_clean,na.rm=TRUE)) / sd(f2_midpt_med_clean,na.rm=TRUE))) %>%  
+  mutate(lob_f3= ((f3_midpt_med_clean - mean(f3_midpt_med_clean,na.rm=TRUE)) / sd(f3_midpt_med_clean,na.rm=TRUE))) %>%
+  mutate(lob_f4= ((f4_midpt_med_clean - mean(f4_midpt_med_clean,na.rm=TRUE)) / sd(f4_midpt_med_clean,na.rm=TRUE))) 
+
+lob_kids$f4 = NA # add f4 column to child data
+
+lobanov_bound <- rbind(lob_adults, lob_kids)
+lobanov_normed <- merge(lobanov_bound, vtl_data2, by = c("spkr", "Phone", "f1_midpt_med_clean", "f2_midpt_med_clean", "f3_midpt_med_clean", "f4_midpt_med_clean"))
+```
+
+```{r write out data for ch4, include=FALSE}
+write.csv(lobanov_normed, '/Users/Meg/Box Sync/Dissertation/Experiment_3/results/lobanov_data.csv', row.names = FALSE)
+```
+
+```{r, plot-raw-lobanov-data, echo=FALSE, fig.cap='Lobanov-normalized vowels by age: \n adults and children'}
+peripheral_lobanov <- lobanov_normed %>% 
+  filter(Phone!='e' & Phone!='o')
+
+# we make a sep dataset to plot the vowels so that all NAs are removed (we need an F1 and correspnding F2 for the plots)
+sub_lobanov_normed <- peripheral_lobanov %>%
+  group_by(Age, Phone) %>%
+  sample_n(10) %>%
+  select(lob_f1, lob_f2, Phone, Age) %>%
+  na.omit()
+
+lob_plot_elpses <- peripheral_lobanov %>%
+  select(lob_f1, lob_f2, Phone, Age) %>%
+  na.omit()
+
+ggplot(sub_lobanov_normed, aes(lob_f2, lob_f1, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=3) +
+  facet_wrap(~Age) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+   stat_ellipse(data=lob_plot_elpses, 
+               aes(lob_f2, lob_f1),
+               type='t', alpha = 0.7) + 
+  scale_color_manual(values = c('purple3', 'turquoise4',  'goldenrod')) +
+  labs(y="z(F1)", x="z(F2)", 
+       #title = "Lobanov-normalized vowels by age: \n adults and children",
+       caption = "Ellipses represent 95% CIs, or approximately 2 SDs of all data, assuming a normal t-distribution. \n Individual points represent random subset of 10 tokens per vowel category.") + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=13),
+  axis.text.y = element_text(face="bold", size=13),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+```
+
+After scaling the vowels using the two scaling methods, the vowel variability between the children and adults for both sets of normalized vowels (Lobanov and $\Delta$F) was measured. Again, for the Lobanov normalization technique separate normalization factors are calculated for F1 and F2 for each speaker. The $\Delta$F technique, however, uses a single normalization coefficient for each speaker. We measured the variability of each vowel category for each age group (so three categories per age group) using a single coefficient that reflects both the *mean* value of each vowel category and the *variability* of each category along the F1 and F2 dimensions. To calculate this coefficient, the following steps were taken. 
+
+1. First, we measured the difference between the mean value of each vowel category for the adults and a given child age group. For example, we measured the mean F1 of [a] over all of the 5;0 children and the mean F1 of [a] over all of the adults and then we took the difference between these values. This calculation was performed for the F1 and F2 measures for each vowel category. This step estimated the position of the vowel category in acoustic space. 
+
+2. For the next step, we took the root mean square of the difference between the vowel categories for F1 and F2 (calculated in step one). Finally, these root mean square calculations for F1 and F2 were summed. This step estimated the standard deviation of the vowel category (disperion of the category in space).
+
+These steps resulted in a single variability coefficient for each vowel category, for each child age group, that factored in both formants. Consequently, this measure is somewhat of an improvement upon the traditional CoV which has unique values for each formant. These measures were applied separately to the $\Delta$F-normalized vowels and the Lobanov-normalized vowels. 
+
+```{r, measure deltaf dispersion via rms, include=FALSE}
+# separate rms coefficient for each vowel and age group
+# we include all five vowels because we eventually loop them into the analysis
+# first calculate a mean for each formant and phone for the adults
+delta_rms_adults <- delta_normed %>%
+  filter(Age=='adult') %>%
+  #group_by(Age) %>% # we dont care about articulator in adults
+  mutate(mean_f1_a = mean(f1_delta_norm[Phone=='a'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_a = mean(f2_delta_norm[Phone=='a'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_i = mean(f1_delta_norm[Phone=='i'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_i = mean(f2_delta_norm[Phone=='i'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_u = mean(f1_delta_norm[Phone=='u'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_u = mean(f2_delta_norm[Phone=='u'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_e = mean(f1_delta_norm[Phone=='e'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_e = mean(f2_delta_norm[Phone=='e'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_o = mean(f1_delta_norm[Phone=='o'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_o = mean(f2_delta_norm[Phone=='o'], na.rm=TRUE)) %>% 
+  select(mean_f1_a, mean_f2_a, mean_f1_i, mean_f2_i, mean_f1_u, mean_f2_u, mean_f1_e, mean_f2_e, mean_f1_o, mean_f2_o) %>%
+  distinct()
+
+delta_rms_kids <- delta_normed %>%
+  filter(Age!='adult') %>%
+  group_by(Age, a_articulator) %>% # calculate rms separately based on age and artic status
+  mutate(mean_f1_a = mean(f1_delta_norm[Phone=='a'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_a = mean(f2_delta_norm[Phone=='a'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_i = mean(f1_delta_norm[Phone=='i'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_i = mean(f2_delta_norm[Phone=='i'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_u = mean(f1_delta_norm[Phone=='u'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_u = mean(f2_delta_norm[Phone=='u'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_e = mean(f1_delta_norm[Phone=='e'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_e = mean(f2_delta_norm[Phone=='e'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_o = mean(f1_delta_norm[Phone=='o'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_o = mean(f2_delta_norm[Phone=='o'], na.rm=TRUE)) %>% 
+  ungroup()
+
+# get difference between means and calculate rms
+delta_space_rms <- delta_rms_kids %>%
+  filter(Age !='adult') %>%
+  select(Age, spkr, a_articulator, mean_f1_a, mean_f2_a, mean_f1_i,
+         mean_f2_i, mean_f1_u, mean_f2_u, mean_f1_e, mean_f2_e, 
+         mean_f1_o, mean_f2_o) %>%
+  distinct() %>%
+  group_by(Age, a_articulator) %>% 
+  mutate(diff_rms_a = sqrt((delta_rms_adults$mean_f1_a - (mean_f1_a))^2)  
+         + sqrt((delta_rms_adults$mean_f2_a - (mean_f2_a))^2)) %>%
+  
+  mutate(diff_rms_i = sqrt((delta_rms_adults$mean_f1_i - (mean_f1_i))^2)  
+         + sqrt((delta_rms_adults$mean_f2_i - (mean_f2_i))^2)) %>%
+  
+  mutate(diff_rms_u = sqrt((delta_rms_adults$mean_f1_u - (mean_f1_u))^2)  
+         + sqrt((delta_rms_adults$mean_f2_u - (mean_f2_u))^2)) %>%
+  
+  mutate(diff_rms_e = sqrt((delta_rms_adults$mean_f1_e - (mean_f1_e))^2)  
+         + sqrt((delta_rms_adults$mean_f2_e - (mean_f2_e))^2)) %>%
+  
+  mutate(diff_rms_o = sqrt((delta_rms_adults$mean_f1_o - (mean_f1_o))^2)  
+         + sqrt((delta_rms_adults$mean_f2_o - (mean_f2_o))^2)) %>%
+  
+  select(Age, spkr, a_articulator, diff_rms_a, diff_rms_i, diff_rms_u, diff_rms_e, diff_rms_o) %>%
+  gather(key="Phone", value="difference_rms", diff_rms_a, diff_rms_i, diff_rms_u, diff_rms_e, diff_rms_o) 
+
+delta_space_rms$Phone <- plyr::mapvalues(delta_space_rms$Phone, from=c("diff_rms_a", "diff_rms_i", "diff_rms_u", "diff_rms_e", "diff_rms_o"), to=c("a", "i", "u", "e", "o"))
+```
+
+```{r, measure lobanov dispersion via rms, include=FALSE}
+# separate rms coefficient for each vowel and age group
+# first calculate a mean for each formant and phone for the adults
+lob_rms_adults <- lobanov_normed %>%
+  filter(Age=='adult') %>%
+  mutate(mean_f1_a = mean(lob_f1[Phone=='a'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_a = mean(lob_f2[Phone=='a'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_i = mean(lob_f1[Phone=='i'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_i = mean(lob_f2[Phone=='i'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_u = mean(lob_f1[Phone=='u'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_u = mean(lob_f2[Phone=='u'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_e = mean(lob_f1[Phone=='e'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_e = mean(lob_f2[Phone=='e'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_o = mean(lob_f1[Phone=='o'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_o = mean(lob_f2[Phone=='o'], na.rm=TRUE)) %>% 
+  
+  select(mean_f1_a, mean_f2_a, mean_f1_i, mean_f2_i, mean_f1_u, mean_f2_u,mean_f1_e, mean_f2_e, mean_f1_o, mean_f2_o) %>%
+  distinct() %>%
+  ungroup()
+
+lob_rms_kids <- lobanov_normed %>%
+  filter(Age!='adult') %>%
+  group_by(Age, a_articulator) %>%
+  mutate(mean_f1_a = mean(lob_f1[Phone=='a'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_a = mean(lob_f2[Phone=='a'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_i = mean(lob_f1[Phone=='i'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_i = mean(lob_f2[Phone=='i'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_u = mean(lob_f1[Phone=='u'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_u = mean(lob_f2[Phone=='u'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_e = mean(lob_f1[Phone=='e'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_e = mean(lob_f2[Phone=='e'], na.rm=TRUE)) %>% 
+  
+  mutate(mean_f1_o = mean(lob_f1[Phone=='o'], na.rm=TRUE)) %>% 
+  mutate(mean_f2_o = mean(lob_f2[Phone=='o'], na.rm=TRUE)) %>% 
+  ungroup()
+
+# now calculate child rms and get difference between adult and child rms 
+lob_space_rms <- lob_rms_kids %>%
+  filter(Age !='adult') %>%
+  select(Age, spkr, a_articulator, mean_f1_a, mean_f2_a, mean_f1_i,
+         mean_f2_i, mean_f1_u, mean_f2_u, mean_f1_e, mean_f2_e, 
+         mean_f1_o, mean_f2_o) %>%
+  distinct() %>%
+  group_by(Age, a_articulator) %>%
+  
+  mutate(diff_rms_a = sqrt((lob_rms_adults$mean_f1_a - (mean_f1_a))^2)  
+         + sqrt((lob_rms_adults$mean_f2_a - (mean_f2_a))^2)) %>%
+  mutate(diff_rms_i = sqrt((lob_rms_adults$mean_f1_i - (mean_f1_i))^2)  
+         + sqrt((lob_rms_adults$mean_f2_i - (mean_f2_i))^2)) %>%
+  mutate(diff_rms_u = sqrt((lob_rms_adults$mean_f1_u - (mean_f1_u))^2)  
+         + sqrt((lob_rms_adults$mean_f2_u - (mean_f2_u))^2)) %>%
+  
+  mutate(diff_rms_e = sqrt((lob_rms_adults$mean_f1_e - (mean_f1_e))^2)  
+         + sqrt((lob_rms_adults$mean_f2_e - (mean_f2_e))^2)) %>%
+  
+  mutate(diff_rms_o = sqrt((lob_rms_adults$mean_f1_o - (mean_f1_o))^2)  
+         + sqrt((lob_rms_adults$mean_f2_o - (mean_f2_o))^2)) %>%
+  
+  select(Age, spkr, a_articulator, diff_rms_a, diff_rms_i, diff_rms_u, diff_rms_e, diff_rms_o) %>%
+  gather(key="Phone", value="difference_rms", diff_rms_a, diff_rms_i, diff_rms_u, diff_rms_e, diff_rms_o) 
+
+lob_space_rms$Phone <- plyr::mapvalues(lob_space_rms$Phone, from=c("diff_rms_a", "diff_rms_i", "diff_rms_u", "diff_rms_e", "diff_rms_o"), to=c("a", "i", "u", "e", "o")) 
+```
+
+```{r, rms-dif-figure, fig.cap="Difference between adult and child vowel categories: RMS method", echo=FALSE}
+# combine lobanov and deltaf to compare differences between variability in normalization methods
+# first make delimiting variables
+lob_space_rms$method <- "Lobanov"
+delta_space_rms$method <- "DeltaF"
+
+normed_compare_rms <- 
+  rbind(lob_space_rms, delta_space_rms) %>% # then combine
+  filter(!(spkr=='c36' & Phone=='u')) # this is the only speaker*phone combo that doesn't have 4 F1 and 4 F2 measurements for a phone ([u])
+
+normed_compare_rms$Age <- ordered(normed_compare_rms$Age, levels = c("4", "5", "6", "7", "8", "9", "10"))
+
+# we still have separate difference_rms coefficients for the two articulatory groups
+# so get the average of those for age and Phone
+normed_compare_rms2 <- normed_compare_rms %>%
+  group_by(Age, Phone, method) %>%
+  na.omit() %>%
+  mutate(difference_rms = mean(difference_rms))
+
+
+ggplot(normed_compare_rms2, aes(Age, difference_rms, color = Phone, group=Phone), alpha=.5) + 
+  geom_point(aes(shape=Phone),size=2.5, alpha=.7) +
+  geom_line() + 
+  facet_wrap(~method) + 
+  scale_color_manual(values = c('purple3', "gray38", 'turquoise4', "brown", 'goldenrod')) +
+  labs(y="Difference between adult and \n child vowel category", x="Age") +  theme(axis.text.x = element_text(face="bold", size=13),
+        axis.text.y = element_text(face ='bold', size=7),
+        axis.title = element_text(face="bold", size=16),
+        strip.text = element_text(face="bold", size=9),
+        plot.caption= element_text(size=7),
+        plot.subtitle = element_text(size=7),
+        title=element_text(face="bold", size=14))
+```
+
+Figure \@ref(fig:rms-dif-figure) displays the difference between the adult and child vowel categories for the two scaling techniques. The left panel of the figure shows the difference between adult and child $\Delta$F-normalized categories, or normalization that incorporates just vocal tract length. The right panel shows the difference between adult and child Lobanov-normalized categories, which incorporate individual formants into the normalization procedure. The visual clearly demonstrates that there are larger differences between normalized adult and child vowel categories that take into account individual formants than vocal tract alone. In other words, beyond vocal tract length and even phone identity, there is still additional variability between adults and children to be accounted for, as the larger values in the right panel demonstrate. These differences between Lobanov-normalized categories and $\Delta$F-normalized categories will be quantified below. It is important to note that the differences between adult and child vowel categories did nevertheless differ by age and phone. For example, there was a large amount of variation between the adult and 4;0 [e] category, but less between the adult and 10;0 [o] category.
+
+Thus far, though we employed a different methodology, these results corroborate Turner et al. (2009): there is additional, unexplained variability in formant frequencies even after removing the effects of phone identity and vocal tract length. However, Turner et al. (2009) concluded that this outstanding variability was due to measurement error in formant tracking in spectrograms and the use of LPC. The authors concluded that any remaining variability beyond that was likely to be statistically meaningless. 
+
+On the basis of this observed difference between the two scaling techniques, we hypothesized that the increased variability in the children's productions *could* be due to their articulatory configurations, and not simple measurement error. Specifically, if some children were not compensating for the ratios between their front and back cavities by adjusting their lingual positioning to approximate adult-like formant frequency ratios between cavities, then we might see this exact difference between the uniform and non-uniform scaling techniques. However, this preliminary conclusion requires additional evidence. 
+
+We took several steps to evaluate the idea that the outstanding variability might reflect children's lack of compensation for their vocal tract morphologies.
+
+1. We classified the children into two groups on the basis of their ratios between back-affiliated and front-affiliated formants. We did so using a technique that did not require us to make assumptions about which formants originated in which cavity (to be explained in detail in the following section). This split was designed to classify the children into more "adult-like" articulators (those children who have either approximated adult-like cavity ratios or who adjust their lingual articulations to approximate adult-like acoustics). The rest of the children were classified into more "child-like" articulators (those children who may not compensate articulatorily as much for their vocal tract morphologies). 
+
+2. We fit a series of statistical models to the children's un-normalized formant frequency data. In doing so, we were able to evaluate in a stepwise manner the effect of adding parameters that are known to influence formant frequency values, such phone identity or vocal tract length, as well as parameters that we hypothesized *might* influence formant values, such as the ratio between front- and back-cavity affiliated formants. 
+
+The following two sections outline the results of these analyses. 
+
+### Classification into adult-like and child-like articulators
+
+The first way that we evaluated if children were compensating for their vocal tract morphology was to divide the children into two groups: adult-like articulators and child-like articulators. This classification was made on the basis of the children's ratios between the first and second formants for [a] and ratios between the second and third formants for [a]. We opted for these criteria for the classification for several reasons. One, if children do not alter their articulatory strategies to compensate for their relatively longer oral cavity, then they would be expected to show different ratios between these formants when compared to adults. Specifically, the longer oral cavity relative to pharyngeal - because the pharyngeal cavity grows disproportionately fast in childhood for boys and girls - results in a heightened F2 compared to an adult model (when assuming adult-like formant-cavity affiliations). Thus, those formants deriving from the back cavity in children would be lower relative to the formants affiliated to a front cavity. 
+
+The decision was made to calculate formant frequency *ratios* because doing so does not require knowledge or assumptions of formant-cavity affiliations. Formant-cavity affiliations may be problematic assumptions to draw acoustically because they can become highly unpredictable in the event of some articulatory modifications (e.g. undershoot). Formant-cavity affiliations can also potentially vary due to idiosyncratic vocal tract characteristics (e.g. a heightened palate). Formant ratios, such as the measures proposed here, merely reflect the relationship between the cavity sizes, independent of specific affiliations, allowing us to skirt entirely the issue of affiliation (Apostol et al., 2004).  
+
+Finally, we chose F1 to F2 and F2 to F3 ratios for [a] in particular because it has been predicted that the ratio between F1 and F2 for [a] is larger in children than adults and that the ratio between F2 and F3 for [a] is smaller in children than adults (Ménard et al., 2007). We additionally opted to calculate formant ratios for [a], instead of [i] or [u], as Helmholtz resonators are the source of (some of) the formants of [i] and [u]. Since Helmholtz resonators reflect constriction length and area, in addition to cavity length and volume, these were less ideal options to reflect the ratio between cavity sizes in the children. 
+
+Before splitting the children into groups on the basis of these formant ratios, we performed an additional check on our assumptions concerning the ratios between back- and front-affiliated formants. To do that, the hypotheses concerning the formant ratios were evaluated on two data sets containing formant measurements from adult speakers. Like the child vocal tract, though to a lesser extent, the female adult vocal tract has a smaller pharyngeal cavity relative to oral. Consequently, to validate the formant ratio approach, we calculated the mean F1, F2, and F3 for [a] over all of the adult speakers in the classic Petersen & Barney (1952) vowel dataset and also the Hillenbrand et al. (1995) vowel dataset using the phonTools R library (Barreda, 2015). The Petersen & Barney dataset contained n=28 adult women and n=33 adult men and the Hillenbrand et al. dataset contained n=48 adult women and n=45 adult men. Overall, we confirmed the relationship between F1 and F2 for [a]: in the Petersen & Barney dataset, women had a higher average F1:F2 ratio (female mean=0.70, sd=0.06) than men (male mean=0.66, sd=0.04). This was also the case for F1:F2 in the Hillenbrand dataset: F1:F2 for women (mean=0.61, sd=0.07) and F1:F2 for men (mean=0.58, sd=0.06). 
+
+The ratio between F2 and F3 in the datasets was less straightforward. As anticipated, women had a smaller F2:F3 ratio in the Petersen & Barney dataset, though this difference was slight (female: mean=0.44, sd=0.05, male: mean=0.45, sd=0.06). However, women had a larger average F2:F3 ratio in the Hillenbrand data (female: mean=0.54, sd=0.05, male: mean=0.52, sd=0.06). As a result of this, although we factor both F1:F2 and F2:F3 into the calculation of the median split by children, we rely only on the F1:F2 ratio for our statistical modeling procedure presented in the following section becuase that ratio appears to be the most reliable indicator of cavity size.
+
+Having confirmed that the formant ratios do reflect differences in cavity size, we turned to the calculations of formant ratios for the children in the current study. To do this, we calculated the mean F1, F2, and F3 for [a] for each child. (Participant c64 only had one valid [a] token, so formant ratios for that participant were not computed and c64 is not included in the following analyses.) Then, we calculated the median F1:F2 ratio and F2:F3 ratio for [a] over all the children. Those children who had both a higher F1:F2 ratio *and* lower F2:F3 ratio for [a] were classified as "child-like" articulators. Children who did not satisfy both criteria were classified as "adult-like" articulators. So a child who only had a higher F1:F2 ratio or only a lower F2:F3 ratio was not classified as child-like. This method allowed us to maximally conservative in the classification of the children. 
+
+Table \@ref(tab:type-of-articulator-tbl) displays the number of children by age group who were classified as adult-like articulators and child-like articulators. As anticipated, in the older age groups 9;0 and 10;0, there are fewer children who were classified as child-like articulators. Still, the fact that several children were classified as child-like articulators, even a few in the eldest age groups, demonstrates that there may be great variability in when children learn to approximate adult-like acoustic patterning and adult-like cavity sizes. This makes sense as children grow at different rates, have growth spurts at different times, and have different experience practicing language. These factors are further considered in the discussion section.  
+
+Figures \@ref(fig:visualize-diff-coef) and \@ref(fig:visualize-diff-coef-avg) display the results of the comparison by median split. On the left, the adult-like articulators show a linear decrease in difference between Lobanov and $\Delta$F vowel category size. This linear decrease with age is anticipated because as the adult-like children age, there should be fewer and fewer differences between adults and children outside of vocal tract length. This is presumably because as children age, they are more likely to have mastered vocal tract morphology compensation. (A linear decrease is not exactly present for [i].)
+
+```{r, type-of-articulator-tbl, echo=FALSE}
+med_age_ct_a <- med_age_ct_a[c(2, 3, 4, 5, 6, 7, 1),]
+
+knitr::kable(med_age_ct_a, caption = 'Number of children classified as child-like and adult-like articulators, by age', booktabs=T, row.names = FALSE) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, visualize-diff-coef, fig.cap="Difference between adult and child vowel categories by scaling method and articulatory status", echo=FALSE}
+# visualize the above result in a different way
+
+# prepare dataset
+normed_coef_rms <- normed_compare_rms %>%
+  spread(key="method", value="difference_rms") %>% # we have different difference values for different types of articulators
+  mutate(dl_diff = Lobanov - DeltaF) %>%
+  filter(spkr!='c64') # again, remove c64 because only has one [a] token
+normed_coef_rms$dl_diff <- as.numeric(normed_coef_rms$dl_diff)
+
+
+ggplot(normed_coef_rms, aes(Age, dl_diff, group=Phone, color=Phone)) + 
+  facet_wrap(~a_articulator) + 
+  geom_line() +
+  geom_point(aes(shape=Phone),size=2.5, alpha=.9) +
+    scale_color_manual(values = c('purple3', "gray38", 'turquoise4',  "brown",  'goldenrod')) +
+  geom_hline(yintercept=0, linetype="dashed", 
+                color = "black", size=.5) + 
+  labs(y="Difference between Lobanov \n and DeltaF values", x="Age",
+       caption="No children in the 9;0 group were classified as child-like articulators. \n The 5;0 child-like articulator did not have 4 formant observations for [u] so those data are not reported.") + 
+  theme(axis.text.x = element_text(face="bold", size=13),
+  axis.text.y = element_text(face ='bold', size=7),
+  axis.title = element_text(face="bold", size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption= element_text(size=7),
+  plot.subtitle = element_text(size=7),
+  title=element_text(face="bold", size=12))
+```
+
+```{r, visualize-diff-coef-avg, fig.cap="Average difference between adult and child vowel categories by scaling method and articulatory status.", echo=FALSE}
+# do the above plot but averaging all phones together
+normed_nophone <- normed_coef_rms %>%
+  group_by(Age, a_articulator) %>%
+  na.omit() %>%
+  mutate(nophone_dl_diff = mean(Lobanov) - mean(DeltaF)) %>%
+  distinct(nophone_dl_diff, .keep_all = TRUE) %>%
+  select(-spkr)
+
+ggplot(normed_nophone, aes(Age, nophone_dl_diff, group=Phone)) + 
+  geom_line(color='gray') +
+  geom_point(size=4) +
+  facet_wrap(~a_articulator) + 
+  geom_hline(yintercept=0, linetype="dashed", 
+                color = "black", size=.5) + 
+  labs(y="Difference between Lobanov \n and DeltaF values", x="Age",
+       caption="No children in the 9;0 group were classified as child-like articulators.") + 
+  theme(axis.text.x = element_text(face="bold", size=13),
+  axis.text.y = element_text(face ='bold', size=7),
+  axis.title = element_text(face="bold", size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption= element_text(size=7),
+  plot.subtitle = element_text(size=7),
+  title=element_text(face="bold", size=14))
+```
+
+### Fitting models to un-normalized formant frequency data
+
+As a final step to determine what accounts for the outstanding variation in the formant data, I built statistical models to predict the values of unnormalized formant frequency data from the child speakers. The goal of this modeling was to determine the predictors of formant frequencies in the children. The constructed models permitted control of factors known to influence formant frequencies, such as phone identity and vocal tract length, so that we could determine if the addition of cavity size (ratio of F1:F2 for [a]) explained any remaining formant frequency variance. Thus the dependent variable in the modeling was *un-normalized* formant frequency data (separate models for F1 and F2; details below) because the intent was to factor out anatomical differences via the addition of a **Vocal Tract Length** parameter in the models. Additionally, for this modeling, we only incorporated the peripheral, phonemic vowels /a, i, u/ because we did not have sufficient data for the allophonic vowels to include them in the modeling. 
+
+Two generalized linear mixed effects models (GLMMs) were fit to predict the children's un-normalized formant frequency data. One model was fit to predict the F1 measures and another model was fit to predict the F2 measures. The choice to fit GLMMs was made due to the non-negative and right-skewed nature of the F1 and F2 outcome variables. Continuous variables were mean-centered and standardized to facilitate model interpretation. Both models were fit according to the following procedure: first, a baseline model with only the random intercepts for individual **Speaker** was fit. Then, model parameters were added in the following order: **Phone** (/a, i, u/), **Vocal Tract Length**, **F1:F2 ratio for [a]**, and **Gender**. Once again the models were only fit to predict formant variability within the child speakers. 
+
+For both the F1 and F2 models, **Phone**, **Vocal Tract Length**, and  **F1:F2 ratio for [a]** improved upon baseline model fits. **Gender** did not improve upon the F1 or F2 models containing **Phone**, **Vocal Tract Length**, and  **F1:F2 ratio for [a]**. The final model summary for F1 is listed in Table \@ref(tab:f1-model) and the model summary for F2 is in Table \@ref(tab:f2-model). This result for the models suggests that there is additional variance in the formant frequency measures beyond phone identity and vocal tract length - something that Turner et al. (2009) likewise concluded However, the addition of the **F1:F2 ratio for [a]** parameter in a model already controlling for extant variability (i.e. in the error term) suggests that the outstanding variance in the formant frequency measures can be accounted for with the size of the children's cavities. 
+
+```{r, model-building, include=FALSE}
+peripheral_kids <- vtl_data2 %>% 
+  filter(Phone!='e' & Phone!='o' & age_yrs!='adult') %>%
+  select(Age, a_ratiof1f2, vtl, f1_midpt_med_clean, Word, gender, spkr, f2_midpt_med_clean, Phone) %>%
+  filter(spkr!='c64') # again, remove c64 because only one [a] token
+
+# center and standardize ratio and vtl factors
+center_scale <- function(x) {
+  scale(x, scale = FALSE)
+}
+peripheral_kids$a_ratiof1f2_centered <- center_scale(peripheral_kids$a_ratiof1f2) 
+peripheral_kids$vtl_centered <- center_scale(peripheral_kids$vtl) 
+
+
+# both formants are non-negative and highly right-skewed
+# fit f1model
+peripheralf1 <- peripheral_kids[!is.na(peripheral_kids$f1_midpt_med_clean),]
+peripheralf1 <- peripheralf1[!is.na(peripheralf1$a_ratiof1f2_centered),] 
+
+m <- glmmTMB(f1_midpt_med_clean ~ 
+             (1|spkr), 
+             data=peripheralf1)
+
+m2 <- glmmTMB(f1_midpt_med_clean ~ 
+                Phone + 
+                (1|spkr), 
+              data=peripheralf1)
+anova(m, m2) # unsurprisingly, phone improves fit
+
+m3 <- glmmTMB(f1_midpt_med_clean ~ 
+                Phone + 
+                vtl_centered + 
+                (1|spkr), 
+              data=peripheralf1)
+anova(m2, m3) # vtl improves fit
+
+m4 <- glmmTMB(f1_midpt_med_clean ~ 
+                Phone + 
+                vtl_centered + 
+                a_ratiof1f2_centered + 
+                (1|spkr), 
+              data=peripheralf1)
+anova(m3, m4) # ratio improves fit
+
+m5 <- glmmTMB(f1_midpt_med_clean ~ 
+                Phone + 
+                vtl_centered + 
+                a_ratiof1f2_centered + 
+                gender+ 
+                (1|spkr), 
+              data=peripheralf1)
+anova(m4,m5) # gender doesn't improve
+
+# -----------------------------------------
+# fit f2model
+peripheralf2 <- peripheral_kids[!is.na(peripheral_kids$f2_midpt_med_clean),]
+peripheralf2 <- peripheralf2[!is.na(peripheralf2$a_ratiof1f2_centered),] # c64 doesn't have ratio - need to investigate
+
+mf2 <- glmmTMB(f2_midpt_med_clean ~ 
+                 (1|spkr), 
+               data=peripheralf2)
+m2f2 <- glmmTMB(f2_midpt_med_clean ~ 
+                  Phone + 
+                  (1|spkr), 
+                data=peripheralf2)
+anova(mf2, m2f2) # unsurprisingly, phone improves fit
+
+m3f2 <- glmmTMB(f2_midpt_med_clean ~ 
+                  Phone + 
+                  vtl_centered + 
+                  (1|spkr), 
+                data=peripheralf2)
+anova(m2f2, m3f2) # vtl improves fit
+
+m4f2 <- glmmTMB(f2_midpt_med_clean ~ 
+                  Phone + 
+                  vtl_centered + 
+                  a_ratiof1f2_centered + 
+                  (1|spkr), 
+                data=peripheralf2)
+anova(m3f2, m4f2) # ratio improves 
+
+m5f2 <- glmmTMB(f2_midpt_med_clean ~ 
+                  Phone + 
+                  vtl_centered + 
+                  a_ratiof1f2_centered + 
+                  gender + 
+                  (1|spkr), 
+                data=peripheralf2)
+anova(m4f2, m5f2) # gender doesn't improve
+```
+
+```{r, prepare model tables, include=FALSE}
+glmms <- rbind(broom.mixed::tidy(m4, 
+                                 effects = c("fixed"), 
+                                 conf.int = TRUE) %>% 
+                 mutate(model = "f1model"),
+               broom.mixed::tidy(m4f2, 
+                                 effects = c("fixed"), 
+                                 conf.int = TRUE) %>% 
+                 mutate(model = "f2model"))               
+               
+glmms$term <- plyr::mapvalues(glmms$term, 
+                                     from = c("(Intercept)", 
+                                              "Phonei", 
+                                              "Phoneu", 
+                                              "vtl_centered",
+                                              "a_ratiof1f2_centered"
+                                        ), 
+                                     to = c("Intercept", 
+                                            "Phone:[i]", 
+                                            "Phone:[u]", 
+                                            "Vocal Tract Length", 
+                                            "F1:F2 ratio for [a]"
+                                            ))
+glmms$conf.high <- round(as.numeric(glmms$conf.high),2)
+glmms$conf.low <- round(as.numeric(glmms$conf.low),2)
+glmms$'95% CI' <- paste(glmms$conf.high,glmms$conf.low,sep=',')
+
+
+glmms <- glmms %>% rename(
+    S.E. = std.error,
+    z.statistic = statistic) %>%
+  select(c(-effect, -component, -conf.high, -conf.low))
+```
+
+```{r, f1-model, echo=FALSE}
+glmms$'95% CI' <- as.factor(glmms$'95% CI')
+papaja::apa_table(glmms %>% 
+                  filter(model=='f1model') %>% 
+                  select(-model), 
+                  caption="Model predicting F1 frequencies") 
+```
+
+```{r, f2-model, echo=FALSE}
+glmms$'95% CI' <- as.factor(glmms$'95% CI')
+papaja::apa_table(glmms %>% 
+                  filter(model=='f2model') %>% 
+                  select(-model), 
+                  caption="Model predicting F2 frequencies") 
+```
+
+Overall, these results confirm previous research that vocal tract length and phone identity explain large amounts of between-speaker acoustic variation. However, via a step-by-step elimination of these known variables, and statistical model building, we have demonstrated that some school-aged children do not yet approximate adult-like articulatory configurations, as evidenced in the ratios of front and back cavity-affiliated formants. This lack of compensation for vocal tract morphology, which operates *somewhat* independently of vocal tract length, may explain some of the variability known to characterize child speech.
+
+# Appendices
+```{r, deltaf-measurement-table-a, echo=FALSE}
+# make three tables to report normalized values, one per phonemic vowel
+# three separate tables because it's too big to interpret with all vowels in one 
+delta_table_a <-
+  delta_normed_rmvd2 %>%
+  filter(Phone=='a') %>%
+  group_by(Age) %>%
+  select(c(Age, spkr, f1_delta_norm, f2_delta_norm, f3_delta_norm, f4_delta_norm, Phone)) %>%
+  mutate(f1_med = round(median(f1_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f1_mad = round(mad(f1_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f2_med = round(median(f2_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f2_mad = round(mad(f2_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f3_med = round(median(f3_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f3_mad = round(mad(f3_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f4_med = round(median(f4_delta_norm,na.rm = TRUE),2)) %>%  # going to have to remove nas here
+  mutate(f4_mad = round(mad(f4_delta_norm,na.rm = TRUE),2)) %>%
+  distinct(Age, f1_med, f1_mad, f2_med, f2_mad, f3_med, f3_mad, f4_med, f4_mad) %>%
+  arrange(Age) # to order appropriately by age
+
+delta_table_i <-
+  delta_normed_rmvd2 %>%
+  filter(Phone=='i') %>%
+  group_by(Age) %>%
+  select(c(Age, spkr, f1_delta_norm, f2_delta_norm, f3_delta_norm, f4_delta_norm, Phone)) %>%
+  mutate(f1_med = round(median(f1_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f1_mad = round(mad(f1_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f2_med = round(median(f2_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f2_mad = round(mad(f2_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f3_med = round(median(f3_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f3_mad = round(mad(f3_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f4_med = round(median(f4_delta_norm,na.rm = TRUE),2)) %>%  # going to have to remove nas here
+  mutate(f4_mad = round(mad(f4_delta_norm,na.rm = TRUE),2)) %>%
+  distinct(Age, f1_med, f1_mad, f2_med, f2_mad, f3_med, f3_mad, f4_med, f4_mad) %>%
+  arrange(Age) # to order appropriately by age
+
+delta_table_u <-
+  delta_normed_rmvd2 %>%
+  filter(Phone=='u') %>%
+  group_by(Age) %>%
+  select(c(Age, spkr, f1_delta_norm, f2_delta_norm, f3_delta_norm, f4_delta_norm, Phone)) %>%
+  mutate(f1_med = round(median(f1_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f1_mad = round(mad(f1_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f2_med = round(median(f2_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f2_mad = round(mad(f2_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f3_med = round(median(f3_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f3_mad = round(mad(f3_delta_norm,na.rm = TRUE),2)) %>%
+  mutate(f4_med = round(median(f4_delta_norm,na.rm = TRUE),2)) %>%  # going to have to remove nas here
+  mutate(f4_mad = round(mad(f4_delta_norm,na.rm = TRUE),2)) %>%
+  distinct(Age, f1_med, f1_mad, f2_med, f2_mad, f3_med, f3_mad, f4_med, f4_mad) %>%
+  arrange(Age) # to order appropriately by age
+
+setnames(delta_table_a, 
+         c('f1_med','f2_med', 'f3_med', 'f4_med', 
+           'f1_mad', 'f2_mad', 'f3_mad', 'f4_mad'), 
+         c('F1 Median','F2 Median', 'F3 Median', 'F4 Median',
+           'MAD', 'MAD', 'MAD', 'MAD'))
+
+setnames(delta_table_i, 
+         c('f1_med','f2_med', 'f3_med', 'f4_med', 
+           'f1_mad', 'f2_mad', 'f3_mad', 'f4_mad'), 
+         c('F1 Median','F2 Median', 'F3 Median', 'F4 Median',
+           'MAD', 'MAD', 'MAD', 'MAD'))
+
+setnames(delta_table_u, 
+         c('f1_med','f2_med', 'f3_med', 'f4_med', 
+           'f1_mad', 'f2_mad', 'f3_mad', 'f4_mad'), 
+         c('F1 Median','F2 Median', 'F3 Median', 'F4 Median',
+           'MAD', 'MAD', 'MAD', 'MAD'))
+
+knitr::kable(delta_table_a, caption = 'DeltaF-normalized formant frequencies by age group: [a]', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+
+```
+
+```{r, deltaf-measurement-table-i, echo=FALSE}
+knitr::kable(delta_table_i, caption = 'DeltaF-normalized formant frequencies by age group: [i]', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, deltaf-measurement-table-u, echo=FALSE}
+knitr::kable(delta_table_u, caption = 'DeltaF-normalized formant frequencies by age group: [u]', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, delta-disp-tbl-group-alldata, echo=FALSE}
+# remove na outlier tokens
+delta_all_adults <- delta_normed %>% 
+  filter(Age=='adult') %>%
+  select(f1_delta_norm, f2_delta_norm, f3_delta_norm, f4_delta_norm, spkr, Phone) %>%
+  na.omit()  # remove nas (outlier measurements that we threw out)
+
+delta_all_kids <- delta_normed %>% 
+  filter(Age!='adult') %>%
+  select(f1_delta_norm, f2_delta_norm, f3_delta_norm, spkr, Phone) %>%
+  na.omit()  # remove nas (outlier measurements that we threw out)
+delta_all_kids$f4_delta_norm = NA # add f4 column to child data
+
+delta_all_all <- rbind(delta_all_adults, delta_all_kids)
+
+delta_normed_all <- merge(delta_all_all, vls_normed_rmvd2, by = c("spkr", "Phone", "f1_delta_norm", "f2_delta_norm", "f3_delta_norm", "f4_delta_norm"))
+
+# first measure group and individual CoV over all data
+# we only calculate on peripheral vowels
+periph_delta_all <- delta_normed_all %>% filter(Phone !='e' & Phone !='o')
+# calculate group-level CoV
+periph_delta_all <- periph_delta_all %>%
+  group_by(Age, Phone) %>%    # calculate separately for each age group, including adults, and vowel
+  mutate(F1_CoV = (sd(f1_delta_norm)) / (mean(f1_delta_norm))) %>% 
+  mutate(F2_CoV = (sd(f2_delta_norm)) / (mean(f2_delta_norm))) 
+
+# calculate individual-level CoV 
+delta_spkr_mean_alldata <- periph_delta_all %>%
+  group_by(Age, Phone, spkr) %>%    # calculate separately for each speaker, including adults
+  mutate(F1_CoV = (sd(f1_delta_norm)) / (mean(f1_delta_norm))) %>% 
+  mutate(F2_CoV = (sd(f2_delta_norm)) / (mean(f2_delta_norm)))
+
+# for F1
+delta_COV_table_f1_alldata <- periph_delta_all %>%
+  select(Age, Phone, F1_CoV) %>%
+  distinct() %>%
+  spread(key = "Phone", value = "F1_CoV") %>%
+  mutate(a=round(a,2),
+         i=round(i,2),
+         u=round(u,2))
+
+# for F2
+delta_COV_table_f2_alldata <- periph_delta_all %>%
+  select(Age, Phone, F2_CoV) %>%
+  distinct() %>%
+  spread(key = "Phone", value = "F2_CoV") %>%
+  mutate(a=round(a,2),
+         i=round(i,2),
+         u=round(u,2))
+
+delta_table_final_alldata <- merge(delta_COV_table_f1_alldata, delta_COV_table_f2_alldata, by=c("Age"))
+
+colnames(delta_table_final_alldata) <- c("Age","[a]", "[i]", "[u]", "[a] ", "[i] ", "[u] ")
+delta_table_final_alldata <- data.table::setDT(delta_table_final_alldata)
+
+delta_table_final_alldata <- delta_table_final_alldata[c(2, 3, 4, 5, 6, 7, 1, 8),]
+
+
+knitr::kable(delta_table_final_alldata, caption = 'Group-level average CoV by formant and vowel for children and adults: all data', booktabs=T) %>% 
+  kable_styling() %>%
+  add_header_above(c(" " = 1, "F1" = 3, "F2" = 3)) %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, delta-disp-tbl-spkr-alldata-f1, echo=FALSE}
+# we already have individual CoV calculated from above
+delta_spkr_tbl_alldata <- delta_spkr_mean_alldata %>%  
+  group_by(Age, Phone) %>%
+  select(Age, Phone, F1_CoV, F2_CoV) %>%
+  distinct() %>%
+  na.omit %>% # one 9;0 and one adult only have one [a] token over which COV was calculated so those emerge as NA
+  summarize(F1_mean=mean(F1_CoV),
+            F1_sd=sd(F1_CoV),
+            F1_min=min(F1_CoV),
+            F1_max=max(F1_CoV),
+            F2_mean=mean(F2_CoV),  
+            F2_sd=sd(F2_CoV),
+            F2_min=min(F2_CoV),
+            F2_max=max(F2_CoV)) %>%
+  mutate(F1_stats = paste(round(F1_mean,2), "(", round(F1_sd,2), ")", round(F1_min,2), "-", round(F1_max,2))) %>%
+  mutate(F2_stats = paste(round(F2_mean,2), "(", round(F2_sd,2), ")", round(F2_min,2), "-", round(F2_max,2))) %>%
+  select(-F1_min, -F2_min, -F1_max, -F2_max, -F1_sd, -F2_sd, -F1_mean, -F2_mean) 
+
+# F1 table
+delta_spkr_tbl_f1_alldata <- delta_spkr_tbl_alldata %>%
+  select(-F2_stats) %>%
+  spread(key = "Phone", value = "F1_stats") 
+
+# F2 table
+delta_spkr_tbl_f2_alldata <- delta_spkr_tbl_alldata %>%
+  select(-F1_stats) %>%
+  spread(key = "Phone", value = "F2_stats") 
+
+colnames(delta_spkr_tbl_f2_alldata) <- c("Age","[a] mean (SD) range", "[i]", "[u]") # the 4;0 only have 1-2 tokens 
+colnames(delta_spkr_tbl_f1_alldata) <- c("Age","[a] mean (SD) range", "[i]", "[u]") # the 4;0 only have 1-2 tokens 
+
+delta_table_spkr_f2 <- data.table::setDT(delta_spkr_tbl_f2_alldata)
+delta_table_spkr_f1 <- data.table::setDT(delta_spkr_tbl_f1_alldata)
+
+#delta_table_spkr_f2 <- delta_table_spkr_f2[c(2, 3, 4, 5, 6, 7, 8, 1),]
+#delta_table_spkr_f1 <- delta_table_spkr_f1[c(2, 3, 4, 5, 6, 7, 8, 1),]
+
+knitr::kable(delta_table_spkr_f1, caption = 'Individual-level CoV by formant and vowel for children and adults: F1', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, delta-disp-tbl-spkr-alldata-f2, echo=FALSE}
+knitr::kable(delta_table_spkr_f2, caption = 'Individual-level CoV by formant and vowel for children and adults: F2', booktabs=T) %>% 
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, lobanov-meas-tbl-a, echo=FALSE}
+lob_table_a <-
+  lobanov_normed %>%
+  filter(Phone=='a') %>%
+  group_by(Age) %>%
+  select(c(Age, spkr, lob_f1, lob_f2, lob_f3, lob_f4, Phone)) %>%
+  mutate(lob_f1_med = round(median(lob_f1,na.rm = TRUE),2)) %>%
+  mutate(lob_f1_mad = round(mad(lob_f1,na.rm = TRUE),2)) %>%
+  mutate(lob_f2_med = round(median(lob_f2,na.rm = TRUE),2)) %>%
+  mutate(lob_f2_mad = round(mad(lob_f2,na.rm = TRUE),2)) %>%
+  mutate(lob_f3_med = round(median(lob_f3,na.rm = TRUE),2)) %>%
+  mutate(lob_f3_mad = round(mad(lob_f3,na.rm = TRUE),2)) %>%
+  mutate(lob_f4_med = round(median(lob_f4,na.rm = TRUE),2)) %>%  # going to have to remove nas here
+  mutate(lob_f4_mad = round(mad(lob_f4,na.rm = TRUE),2)) %>%
+  distinct(Age, lob_f1_med, lob_f1_mad, lob_f2_med, lob_f2_mad, lob_f3_med, lob_f3_mad, lob_f4_med, lob_f4_mad) %>%
+  arrange(Age) # to order appropriately by age
+
+lob_table_i <-
+  lobanov_normed %>%
+  filter(Phone=='i') %>%
+  group_by(Age) %>%
+  select(c(Age, spkr, lob_f1, lob_f2, lob_f3, lob_f4, Phone)) %>%
+  mutate(lob_f1_med = round(median(lob_f1,na.rm = TRUE),2)) %>%
+  mutate(lob_f1_mad = round(mad(lob_f1,na.rm = TRUE),2)) %>%
+  mutate(lob_f2_med = round(median(lob_f2,na.rm = TRUE),2)) %>%
+  mutate(lob_f2_mad = round(mad(lob_f2,na.rm = TRUE),2)) %>%
+  mutate(lob_f3_med = round(median(lob_f3,na.rm = TRUE),2)) %>%
+  mutate(lob_f3_mad = round(mad(lob_f3,na.rm = TRUE),2)) %>%
+  mutate(lob_f4_med = round(median(lob_f4,na.rm = TRUE),2)) %>%  # going to have to remove nas here
+  mutate(lob_f4_mad = round(mad(lob_f4,na.rm = TRUE),2)) %>%
+  distinct(Age, lob_f1_med, lob_f1_mad, lob_f2_med, lob_f2_mad, lob_f3_med, lob_f3_mad, lob_f4_med, lob_f4_mad) %>%
+  arrange(Age) # to order appropriately by age
+
+lob_table_u <-
+  lobanov_normed %>%
+  filter(Phone=='u') %>%
+  group_by(Age) %>%
+  select(c(Age, spkr, lob_f1, lob_f2, lob_f3, lob_f4, Phone)) %>%
+  mutate(lob_f1_med = round(median(lob_f1,na.rm = TRUE),2)) %>%
+  mutate(lob_f1_mad = round(mad(lob_f1,na.rm = TRUE),2)) %>%
+  mutate(lob_f2_med = round(median(lob_f2,na.rm = TRUE),2)) %>%
+  mutate(lob_f2_mad = round(mad(lob_f2,na.rm = TRUE),2)) %>%
+  mutate(lob_f3_med = round(median(lob_f3,na.rm = TRUE),2)) %>%
+  mutate(lob_f3_mad = round(mad(lob_f3,na.rm = TRUE),2)) %>%
+  mutate(lob_f4_med = round(median(lob_f4,na.rm = TRUE),2)) %>%  # going to have to remove nas here
+  mutate(lob_f4_mad = round(mad(lob_f4,na.rm = TRUE),2)) %>%
+  distinct(Age, lob_f1_med, lob_f1_mad, lob_f2_med, lob_f2_mad, lob_f3_med, lob_f3_mad, lob_f4_med, lob_f4_mad) %>%
+  arrange(Age) # to order appropriately by age
+
+setnames(lob_table_a, 
+         c('lob_f1_med','lob_f2_med', 'lob_f3_med', 'lob_f4_med', 
+           'lob_f1_mad', 'lob_f2_mad', 'lob_f3_mad', 'lob_f4_mad'), 
+         c('F1 Median','F2 Median', 'F3 Median', 'F4 Median',
+           'MAD', 'MAD', 'MAD', 'MAD'))
+
+setnames(lob_table_i, 
+         c('lob_f1_med','lob_f2_med', 'lob_f3_med', 'lob_f4_med', 
+           'lob_f1_mad', 'lob_f2_mad', 'lob_f3_mad', 'lob_f4_mad'), 
+         c('F1 Median','F2 Median', 'F3 Median', 'F4 Median',
+           'MAD', 'MAD', 'MAD', 'MAD'))
+
+setnames(lob_table_u, 
+         c('lob_f1_med','lob_f2_med', 'lob_f3_med', 'lob_f4_med', 
+           'lob_f1_mad', 'lob_f2_mad', 'lob_f3_mad', 'lob_f4_mad'), 
+         c('F1 Median','F2 Median', 'F3 Median', 'F4 Median',
+           'MAD', 'MAD', 'MAD', 'MAD'))
+
+knitr::kable(lob_table_a, caption = 'Lobanov-normalized formant frequencies by age group: [a]', booktabs=T) %>%
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, lobanov-meas-tbl-i, echo=FALSE}
+knitr::kable(lob_table_i, caption = 'Lobanov-normalized formant frequencies by age group: [i]', booktabs=T) %>%
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, lobanov-meas-tbl-u, echo=FALSE}
+knitr::kable(lob_table_u, caption = 'Lobanov-normalized formant frequencies by age group: [u]', booktabs=T) %>%
+  kable_styling() %>%
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+```{r, visualize_med_deltanormed_vowels, fig.cap='DeltaF-normalized vowels by age: adults and children', echo=FALSE}
+delta_med <- delta_normed %>%
+  group_by(Phone, Age) %>% 
+  summarize(delta_medF1 = median(f1_delta_norm,na.rm = TRUE),
+            delta_medF2 = median(f2_delta_norm,na.rm = TRUE))
+
+# we make a sep dataset to plot the vowels so that all NAs are removed (we need an F1 and correspnding F2 for the plots)
+delta_plot_elpses2 <- delta_normed %>%
+  select(f1_delta_norm, f2_delta_norm, Phone, Age) %>%
+  na.omit()
+
+# with just median
+ggplot(delta_med, aes(delta_medF2, delta_medF1, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=6) +
+  facet_wrap(~Age) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  stat_ellipse(data=delta_plot_elpses2, 
+               aes(f2_delta_norm, f1_delta_norm), 
+               type = "t", alpha = 0.7) +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+  labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"), 
+       #title = expression(Delta*"F-normalized vowels by age: adults and children"),
+       caption = "Ellipses represent 95% CIs, or approximately 2 SDs of all data, assuming a normal t-distribution.") +   theme(legend.position = "none",
+        axis.text.x = element_text(face="bold", size=13),
+        axis.text.y = element_text(face ='bold', size=13),
+        axis.title=element_text(face="bold", size=16),
+        strip.text = element_text(face="bold", size=9),
+        title=element_text(face="bold", size=16),
+        plot.caption=element_text(face="bold", size=9)) 
+```
+
+```{r, visualize_med_lobanov_vowels, fig.cap='Lobanov-normalized vowels by age: adults and children', echo=FALSE}
+lob_med <- lobanov_normed %>%
+  group_by(Phone, Age) %>% 
+  summarize(lob_medF1 = median(lob_f1,na.rm = TRUE),
+            lob_medF2 = median(lob_f2,na.rm = TRUE))
+
+# we make a sep dataset to plot the vowels so that all NAs are removed (we need an F1 and correspnding F2 for the plots)
+lob_plot_elpses2 <- lobanov_normed %>%
+  select(lob_f1, lob_f2, Phone, Age) %>%
+  na.omit()
+
+# with just median
+ggplot(lob_med, aes(lob_medF2, lob_medF1, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=6) +
+  facet_wrap(~Age) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  stat_ellipse(data=lob_plot_elpses2, 
+               aes(lob_f2, lob_f1), 
+               type = "t", alpha = 0.7) +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+  labs(y="z(F1)", x="z(F2)", 
+       #title = "Lobanov-normalized vowels by age: \n adults and children",
+       caption = "Ellipses represent 95% CIs, or approximately 2 SDs of all data, assuming a normal t-distribution.") + 
+  theme(legend.position = "none",
+        axis.text.x = element_text(face="bold", size=13),
+        axis.text.y = element_text(face="bold", size=13),
+        axis.title=element_text(size=16),
+        strip.text = element_text(face="bold", size=9),
+        title=element_text(size=16),
+        plot.caption=element_text(face="bold", size=9)) 
+```
+
+```{r, delta-rawdata-byage, echo=FALSE}
+delta_normed %>%
+  filter(Age=='4') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in four-year-olds")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+
+delta_normed %>%
+  filter(Age=='5') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in five-year-olds")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+
+delta_normed %>%
+  filter(Age=='6') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in six-year-olds")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+
+delta_normed %>%
+  filter(Age=='7') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in seven-year-olds")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+
+delta_normed %>%
+  filter(Age=='8') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in eight-year-olds")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+
+delta_normed %>%
+  filter(Age=='9') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in nine-year-olds")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+
+delta_normed %>%
+  filter(Age=='10') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in ten-year-olds")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+
+delta_normed %>%
+  filter(Age=='adult') %>%
+  ggplot(., aes(f2_delta_norm, f1_delta_norm, color = Phone, label=Phone), alpha=.5) + 
+  geom_text(size=4) +
+  facet_wrap(~spkr) +
+  scale_y_reverse() + 
+  scale_x_reverse() +
+  scale_color_manual(values = c('purple3', "brown", 'turquoise4', 'gray38', 'goldenrod')) +
+labs(y=expression("F1/"*Delta*"F"), x=expression("F2/"*Delta*"F"),      
+      title = expression(Delta*"F-normalized vowel space in adults")) + 
+  theme(legend.position = "none",
+  axis.text.x = element_text(face="bold", size=10),
+  axis.text.y = element_text(face="bold", size=10),
+  axis.title=element_text(size=16),
+  strip.text = element_text(face="bold", size=9),
+  plot.caption = element_text(size=9),
+  title=element_text(face="bold", size=16)) 
+```
+
+
