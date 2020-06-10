@@ -127,15 +127,15 @@ To further ensure that we were accurately comparing between age groups - since y
 \toprule
 Age & F1 (MAD) & F2 (MAD) & F3 (MAD) & F4 (MAD) & n\\
 \midrule
-4 & 551.38 ( 302 ) & 2080.49 ( 932 ) & 3959.64 ( 423 ) & NA ( NA ) & 205\\
-5 & 491.6 ( 187 ) & 2258.95 ( 1009 ) & 3887.07 ( 482 ) & NA ( NA ) & 288\\
-6 & 483.44 ( 209 ) & 2152.89 ( 1114 ) & 3711.44 ( 415 ) & NA ( NA ) & 313\\
-7 & 484.25 ( 143 ) & 2338.16 ( 1053 ) & 3811.39 ( 396 ) & NA ( NA ) & 488\\
-8 & 500.69 ( 217 ) & 2229.63 ( 1073 ) & 3660.5 ( 390 ) & NA ( NA ) & 293\\
+4 & 551.38 ( 304 ) & 2086.4 ( 922 ) & 3923.31 ( 444 ) & NA ( NA ) & 204\\
+5 & 496.36 ( 195 ) & 2149.71 ( 1030 ) & 3887.62 ( 482 ) & NA ( NA ) & 291\\
+6 & 487.93 ( 206 ) & 2100.83 ( 1121 ) & 3693.67 ( 409 ) & NA ( NA ) & 317\\
+7 & 487.69 ( 153 ) & 2266.38 ( 1083 ) & 3819.14 ( 396 ) & NA ( NA ) & 496\\
+8 & 500.17 ( 207 ) & 2276.08 ( 1037 ) & 3661.81 ( 369 ) & NA ( NA ) & 292\\
 \addlinespace
-9 & 471.67 ( 179 ) & 1916.46 ( 1094 ) & 3668.35 ( 556 ) & NA ( NA ) & 193\\
-10 & 485.78 ( 159 ) & 1948.64 ( 1022 ) & 3501.85 ( 421 ) & NA ( NA ) & 303\\
-adult & 460.91 ( 123 ) & 1603.28 ( 931 ) & 2952.27 ( 289 ) & 4060.2 ( 375 ) & 328\\
+9 & 461.76 ( 170 ) & 1892.66 ( 1104 ) & 3658 ( 559 ) & NA ( NA ) & 192\\
+10 & 484.7 ( 157 ) & 1952.81 ( 1022 ) & 3509.53 ( 392 ) & NA ( NA ) & 304\\
+adult & 460.9 ( 126 ) & 1608.9 ( 935 ) & 2953.89 ( 297 ) & 4044.96 ( 368 ) & 328\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -149,14 +149,14 @@ adult & 460.91 ( 123 ) & 1603.28 ( 931 ) & 2952.27 ( 289 ) & 4060.2 ( 375 ) & 32
 Age & F1 range & F2 range & F3 range & F4 range\\
 \midrule
 4 & 266-1474 & 774-3782 & 2938-4659 & NA-NA\\
-5 & 284-1451 & 797-3767 & 2343-4652 & NA-NA\\
+5 & 261-1451 & 797-3767 & 2343-4652 & NA-NA\\
 6 & 145-1290 & 783-3767 & 2607-4528 & NA-NA\\
-7 & 273-1163 & 794-3734 & 2501-4606 & NA-NA\\
-8 & 245-1216 & 808-3635 & 2526-4422 & NA-NA\\
+7 & 268-1203 & 794-3757 & 2501-4606 & NA-NA\\
+8 & 245-1377 & 808-3579 & 2526-4422 & NA-NA\\
 \addlinespace
 9 & 248-1219 & 847-3672 & 2237-4597 & NA-NA\\
-10 & 249-1076 & 796-3541 & 2630-4447 & NA-NA\\
-adult & 262-1091 & 701-2929 & 2231-3668 & 2832-4726\\
+10 & 249-1285 & 796-3541 & 2630-4447 & NA-NA\\
+adult & 243-1091 & 701-2857 & 2389-3676 & 2832-4726\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -221,7 +221,7 @@ Table \ref{tab:vtl-length-table} summarizes vocal tract length and the ratio bet
 
 The comparison of within-category variability across age groups was conducted on the \(\Delta\)F-normalized formant values. Figure \ref{fig:plot-raw-deltaf-data} plots the median \(\Delta\)F-normalized formant values. (See Tables \ref{tab:deltaf-measurement-table-a} - \ref{tab:deltaf-measurement-table-u} in the appendices for descriptive statistics of \(\Delta\)F-normalized formant values.) As the vowel plots demonstrate, speakers tend to have larger within-category dispersion for {[}a{]} and {[}u{]} than {[}i{]}. However, the pattern by age is less identifiable. With speaker-intrinsic information (ratio between formant frequencies on a by-speaker basis) factored out, which is what \(\Delta\)F does, adults appear to have somewhat tighter, more compact acoustic vowel categories for some vowels, particularly {[}i{]}, than even the eldest children. Other vowels show little difference by age, or, in the case of {[}u{]}, do not seem to follow a strict linear pattern of decreased variation with age.
 
-To better ascertain the developmental pattern of vowel variability, we computed the acoustic dispersion of each vowel category across the age groups. To do so, the root mean square (RMS) of each vowel category was computed, which resulted in a single coefficient per vowel category.\footnote{Previous work has used the Coefficient of Variation (CoV) to measure vowel category dispersion in children (e.g.~Lee et al.~(1999)). The CoV is the ratio of the standard deviation of the mean to the mean of each phoneme category (Bradlow, 1995; Eguchi \& Hirsch, 1965; Lee et al., 1999). One disadvantage of the CoV is that, unlike the RMS technique, separate coefficients must be computed for each acoustic dimension so the result is the CoV of F1, CoV of F2, etc.. Nevertheless, to facilitate comparison of this study with previous work, the CoV for each vowel category was also computed (for F1 and F2). In brief, the dispersion results measured via the CoV replicated the dispersion results measured via the RMS coefficient: the only reliable differences by age when measuring dispersion via CoV were for the F2 of {[}i{]}. Full dispersion results using the CoV, including descriptive statistics and statistical modeling for the CoV for each formant, are included in the appendices.} This RMS coefficient reflects both the \emph{mean} value of each vowel category and its \emph{variability} along the F1 and F2 dimensions. To calculate the RMS, the following steps were taken.
+To better ascertain the developmental pattern of vowel variability, we computed the acoustic dispersion of each vowel category across the age groups. To do so, the average Euclidian distance in F1/F2 space from the vowel mean location was computed, which resulted in a single coefficient per vowel category.\footnote{Previous work has used the Coefficient of Variation (CoV) to measure vowel category dispersion in children (e.g.~Lee et al.~(1999)). The CoV is the ratio of the standard deviation of the mean to the mean of each phoneme category (Bradlow, 1995; Eguchi \& Hirsch, 1965; Lee et al., 1999). One disadvantage of the CoV is that, unlike the category dispersion technique, separate coefficients must be computed for each acoustic dimension so the result is the CoV of F1, CoV of F2, etc.. Nevertheless, to facilitate comparison of this study with previous work, the CoV for each vowel category was also computed (for F1 and F2). In brief, the dispersion results measured via the CoV replicated the dispersion results measured via the category dispersion coefficient: the only reliable differences by age when measuring dispersion via CoV were for the F2 of {[}i{]}. Full dispersion results using the CoV, including descriptive statistics and statistical modeling for the CoV for each formant, are included in the appendices.} This category dispersion coefficient, measured using the Euclidean distance, reflects both the \emph{mean} value of each vowel category and its \emph{variability} along the F1 and F2 dimensions. To calculate the category dispersion coefficient, the following steps were taken.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -243,15 +243,15 @@ These steps were repeated for each vowel production. The mean value of all produ
 \toprule
 Age & [a] mean (SD) range & [i] & [u]\\
 \midrule
-4 & 0.17 ( 0.11 ) 0.02 - 0.57 & 0.22 ( 0.2 ) 0.03 - 0.95 & 0.19 ( 0.13 ) 0.03 - 0.44\\
-5 & 0.19 ( 0.1 ) 0.02 - 0.46 & 0.25 ( 0.25 ) 0.03 - 1.36 & 0.13 ( 0.08 ) 0.03 - 0.42\\
-6 & 0.19 ( 0.11 ) 0 - 0.53 & 0.2 ( 0.17 ) 0 - 0.95 & 0.3 ( 0.25 ) 0.05 - 1.08\\
-7 & 0.2 ( 0.1 ) 0.04 - 0.53 & 0.16 ( 0.12 ) 0.02 - 0.67 & 0.38 ( 0.28 ) 0 - 1.38\\
-8 & 0.19 ( 0.21 ) 0.01 - 1.15 & 0.19 ( 0.2 ) 0.01 - 1.28 & 0.36 ( 0.22 ) 0.1 - 1.07\\
+4 & 0.17 ( 0.11 ) 0.02 - 0.58 & 0.22 ( 0.2 ) 0.03 - 0.95 & 0.19 ( 0.13 ) 0.03 - 0.44\\
+5 & 0.18 ( 0.09 ) 0.02 - 0.41 & 0.26 ( 0.25 ) 0.02 - 1.36 & 0.13 ( 0.08 ) 0.03 - 0.42\\
+6 & 0.18 ( 0.12 ) 0.02 - 0.55 & 0.21 ( 0.17 ) 0.01 - 0.95 & 0.3 ( 0.25 ) 0.05 - 1.08\\
+7 & 0.21 ( 0.1 ) 0.04 - 0.53 & 0.16 ( 0.12 ) 0.01 - 0.68 & 0.38 ( 0.28 ) 0 - 1.38\\
+8 & 0.21 ( 0.24 ) 0.01 - 1.08 & 0.2 ( 0.2 ) 0.01 - 1.27 & 0.36 ( 0.22 ) 0.1 - 1.07\\
 \addlinespace
-9 & 0.16 ( 0.13 ) 0.02 - 0.71 & 0.19 ( 0.15 ) 0.02 - 0.65 & 0.22 ( 0.14 ) 0.03 - 0.73\\
-10 & 0.21 ( 0.15 ) 0.01 - 0.86 & 0.17 ( 0.12 ) 0.01 - 0.49 & 0.25 ( 0.27 ) 0.03 - 1.51\\
-adult & 0.2 ( 0.12 ) 0.02 - 0.59 & 0.13 ( 0.07 ) 0.01 - 0.32 & 0.29 ( 0.2 ) 0.03 - 1.1\\
+9 & 0.18 ( 0.12 ) 0.01 - 0.71 & 0.2 ( 0.14 ) 0.02 - 0.65 & 0.22 ( 0.14 ) 0.03 - 0.73\\
+10 & 0.23 ( 0.15 ) 0.01 - 0.87 & 0.18 ( 0.12 ) 0.02 - 0.5 & 0.25 ( 0.27 ) 0.03 - 1.52\\
+adult & 0.21 ( 0.13 ) 0.03 - 0.59 & 0.13 ( 0.07 ) 0 - 0.32 & 0.29 ( 0.2 ) 0.03 - 1.1\\
 \bottomrule
 \multicolumn{4}{l}{\textit{Note: }}\\
 \multicolumn{4}{l}{4-10 observations per speaker}\\
@@ -261,12 +261,12 @@ adult & 0.2 ( 0.12 ) 0.02 - 0.59 & 0.13 ( 0.07 ) 0.01 - 0.32 & 0.29 ( 0.2 ) 0.03
 \begin{figure}
 \centering
 \includegraphics{3_vtl_results_files/figure-latex/delta-disp-fig-RMS-1.pdf}
-\caption{\label{fig:delta-disp-fig-RMS}Group-level RMS by age and phone}
+\caption{\label{fig:delta-disp-fig-RMS}Group-level category dispersion by age and phone}
 \end{figure}
 
-The average RMS by phone and age group is listed in Table \ref{tab:RMS-tbl-group} and Figure \ref{fig:delta-disp-fig-RMS}. Recall that these measurements were made over vowel categories containing 4-10 observations per speaker.\footnote{RMS measurements computed over \emph{all} data points, including those categories with less than 4 data points, are included in Table \ref{tab:delta-disp-tbl-group-alldata} in the appendices. Overall there were no large differences observed between the RMS values computed over 4-10 tokens per vowel category and those computed over the entire dataset. However, standardizing the number of tokens per category avoids skewing in the event of data loss.} The results demonstrate that the RMS 1) varies by phone and 2) does not always decrease linearly with age. For {[}a{]}, the RMS does not appear to decrease by age at all - the average RMS for {[}a{]} for the adults was 0.18, similar to the values for almost all the other age groups. The RMS for {[}u{]} is highest for the 7;0 and 8;0 groups, again not showing clear evidence of a linear decrease in variability. The RMS for {[}i{]} showed more change with age and was smallest in the adults (.13) and highest in the 4;0 and 5;0 groups (0.22 and 0.25, respectively).
+The average category dispersion by phone and age group is listed in Table \ref{tab:RMS-tbl-group} and Figure \ref{fig:delta-disp-fig-RMS}. Recall that these measurements were made over vowel categories containing 4-10 observations per speaker.\footnote{Category dispersion measurements computed over \emph{all} data points, including those categories with less than 4 data points, are included in Table \ref{tab:delta-disp-tbl-group-alldata} in the appendices. Overall there were no large differences observed between the category dispersion values computed over 4-10 tokens per vowel category and those computed over the entire dataset. However, standardizing the number of tokens per category avoids skewing in the event of data loss.} The results demonstrate that category dispersion 1) varies by phone and 2) does not always decrease linearly with age. For {[}a{]}, the category dispersion coefficient does not appear to decrease by age at all - the average category dispersion for {[}a{]} for the adults was 0.18, similar to the values for almost all the other age groups. The category dispersion for {[}u{]} is highest for the 7;0 and 8;0 groups, again not showing clear evidence of a linear decrease in variability. The category dispersion for {[}i{]} showed more change with age and was smallest in the adults (.13) and highest in the 4;0 and 5;0 groups (0.22 and 0.25, respectively).
 
-The RMS of each vowel category was additionally computed on a by-speaker basis. This resulted in a single RMS coefficient for each vowel from each speaker. Computing the RMS on an individual speaker level generated a datapoint for each speaker's three vowel categories which were used to fit a series of models predicting vowel category dispersion.
+The category dispersion of each vowel category was additionally computed on a by-speaker basis. This resulted in a single category dispersion coefficient for each vowel from each speaker. Computing the category dispersion on an individual speaker level generated a datapoint for each speaker's three vowel categories which were used to fit a series of models predicting vowel category dispersion.
 
 \hypertarget{fitting-models-to-predict-within-category-variability}{%
 \subsubsection{Fitting models to predict within-category variability}\label{fitting-models-to-predict-within-category-variability}}
@@ -276,20 +276,20 @@ The RMS of each vowel category was additionally computed on a by-speaker basis. 
 \begin{center}
 \begin{threeparttable}
 
-\caption{\label{tab:RMS-model-tbl-a}Model predicting RMS for [a]}
+\caption{\label{tab:RMS-model-tbl-a}Model predicting category dispersion for [a]}
 
 \begin{tabular}{llllll}
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-Intercept & -2.11 & 0.15 & -14.19 & 0.00 & -1.82,-2.4\\
-10 & 0.19 & 0.21 & 0.88 & 0.38 & 0.6,-0.23\\
-4 & 0.07 & 0.21 & 0.33 & 0.74 & 0.48,-0.34\\
-5 & 0.14 & 0.21 & 0.67 & 0.50 & 0.54,-0.26\\
-6 & 0.01 & 0.21 & 0.03 & 0.97 & 0.41,-0.4\\
-7 & 0.12 & 0.19 & 0.64 & 0.52 & 0.49,-0.25\\
-8 & -0.10 & 0.22 & -0.45 & 0.65 & 0.34,-0.54\\
-9 & 0.00 & 0.22 & -0.01 & 0.99 & 0.44,-0.44\\
+Intercept & -1.88 & 0.16 & -12.05 & 0.00 & -1.57,-2.18\\
+10 & 0.02 & 0.21 & 0.12 & 0.91 & 0.45,-0.4\\
+4 & -0.14 & 0.21 & -0.65 & 0.52 & 0.28,-0.55\\
+5 & -0.05 & 0.21 & -0.26 & 0.79 & 0.35,-0.46\\
+6 & -0.24 & 0.21 & -1.17 & 0.24 & 0.16,-0.64\\
+7 & 0.08 & 0.19 & 0.43 & 0.66 & 0.45,-0.29\\
+8 & -0.06 & 0.24 & -0.24 & 0.81 & 0.42,-0.54\\
+9 & -0.02 & 0.22 & -0.07 & 0.94 & 0.42,-0.46\\
 \bottomrule
 \end{tabular}
 
@@ -303,20 +303,20 @@ Intercept & -2.11 & 0.15 & -14.19 & 0.00 & -1.82,-2.4\\
 \begin{center}
 \begin{threeparttable}
 
-\caption{\label{tab:RMS-model-tbl-i}Model predicting RMS for [i]}
+\caption{\label{tab:RMS-model-tbl-i}Model predicting category dispersion for [i]}
 
 \begin{tabular}{llllll}
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-Intercept & -2.49 & 0.17 & -15.06 & 0.00 & -2.17,-2.82\\
-10 & 0.54 & 0.23 & 2.31 & 0.02 & 1,0.08\\
-4 & 0.62 & 0.24 & 2.58 & 0.01 & 1.09,0.15\\
-5 & 0.79 & 0.23 & 3.46 & 0.00 & 1.24,0.34\\
-6 & 0.45 & 0.22 & 2.03 & 0.04 & 0.89,0.01\\
-7 & 0.24 & 0.20 & 1.18 & 0.24 & 0.64,-0.16\\
-8 & 0.42 & 0.22 & 1.91 & 0.06 & 0.85,-0.01\\
-9 & 0.27 & 0.26 & 1.06 & 0.29 & 0.78,-0.23\\
+Intercept & -2.51 & 0.17 & -14.81 & 0.00 & -2.18,-2.84\\
+10 & 0.57 & 0.24 & 2.38 & 0.02 & 1.04,0.1\\
+4 & 0.64 & 0.25 & 2.59 & 0.01 & 1.12,0.15\\
+5 & 0.84 & 0.23 & 3.60 & 0.00 & 1.3,0.38\\
+6 & 0.51 & 0.23 & 2.24 & 0.03 & 0.96,0.06\\
+7 & 0.21 & 0.21 & 1.00 & 0.32 & 0.62,-0.2\\
+8 & 0.48 & 0.23 & 2.12 & 0.03 & 0.92,0.04\\
+9 & 0.46 & 0.26 & 1.73 & 0.08 & 0.97,-0.06\\
 \bottomrule
 \end{tabular}
 
@@ -330,7 +330,7 @@ Intercept & -2.49 & 0.17 & -15.06 & 0.00 & -2.17,-2.82\\
 \begin{center}
 \begin{threeparttable}
 
-\caption{\label{tab:RMS-model-tbl-u}Model predicting RMS for [u]}
+\caption{\label{tab:RMS-model-tbl-u}Model predicting category dispersion for [u]}
 
 \begin{tabular}{llllll}
 \toprule
@@ -352,12 +352,11 @@ Intercept & -1.77 & 0.23 & -7.59 & 0.00 & -1.31,-2.23\\
 
 \end{table}
 
-For the RMS model fitting, we fit generalized linear mixed effects models (GLMMs) because the outcome variable - the individual speaker level RMS - was necessarily non-negative and left-skewed. Gamma GLMMs were fit using a log linking function to appropriately model the skewed, non-Gaussian distribution of the residual. Three models were fit, one for each phone (/a, i, u/). The model fitting procedure followed the same procedure for all models: first the baseline model, with just the random effect of \textbf{Speaker}, was fit. Then, the parameter \textbf{Age Group} (4, 5, 6, 7, 8, 9, 10, adult) was added.
+For the category dispersion model fitting, we fit generalized linear mixed effects models (GLMMs) because the outcome variable - the individual speaker level category dispersion - was necessarily non-negative and left-skewed. Gamma GLMMs were fit using a log linking function to appropriately model the skewed, non-Gaussian distribution of the residual. Three models were fit, one for each phone (/a, i, u/). The model fitting procedure followed the same procedure for all models: first the baseline model, with just the random effect of \textbf{Speaker}, was fit. Then, the parameter \textbf{Age Group} (4, 5, 6, 7, 8, 9, 10, adult) was added.
 
-The parameter \textbf{Age Group} was not significant for the model predicting the RMS of {[}a{]}.\footnote{The baseline models for {[}a{]} and {[}i{]} did not converge, but the models with the addition of \textbf{Age Group} did. Consequently, potential differences between age groups were determined solely from model summary outputs for those two models.} For the {[}u{]} model, only one child age group, the 7;0 group, differed significantly from the adults: the 7;0 had a significantly larger {[}u{]} category than the adults. The parameter \textbf{Age Group} did improve upon the model predicting the RMS of {[}i{]}. The model summaries for each phone model, with the \textbf{Age Group} parameter added, are presented in Tables \ref{tab:RMS-model-tbl-a}-\ref{tab:RMS-model-tbl-u}.
+The parameter \textbf{Age Group} was not significant for the model predicting the category dispersion of {[}a{]}.\footnote{The baseline models for {[}a{]} and {[}i{]} did not converge, but the models with the addition of \textbf{Age Group} did. Consequently, potential differences between age groups were determined solely from model summary outputs for those two models.} For the {[}u{]} model, only one child age group, the 7;0 group, differed significantly from the adults: the 7;0 had a significantly larger {[}u{]} category than the adults. The parameter \textbf{Age Group} did improve upon the model predicting the category dispersion of {[}i{]}. The model summaries for each phone model, with the \textbf{Age Group} parameter added, are presented in Tables \ref{tab:RMS-model-tbl-a}-\ref{tab:RMS-model-tbl-u}.
 
-As the beta coefficients in the {[}i{]} model summary demonstrates, there were some differences by age group in category dispersion for the {[}i{]} phoneme. Specifically, the adults had significantly tighter {[}i{]} categories than all children except for the 7;0 and 9;0 groups (the difference between the adults and 7;0 only approached significance). Furthermore, as the beta coefficients demonstrate, the children's RMS values did not necessarily decrease linearly with age - the 10;0 group, for example, actually had significantly more dispersed categories than the 9;0 group.
-
+As the beta coefficients in the {[}i{]} model summary demonstrates, there were some significant differences by age group in category dispersion for the {[}i{]} phoneme. Specifically, the adults had significantly tighter {[}i{]} categories than all children except for the 7;0 and 9;0 groups (the difference between the adults and 7;0 only approached significance). Furthermore, as the beta coefficients demonstrate, the children's RMS values did not necessarily decrease linearly with age - the 10;0 group, for example, actually had significantly more dispersed categories than the 9;0 group.
 Overall, this analysis shows that there are not significant differences in category dispersion between adults and children for {[}a{]}. For {[}u{]}, only the 7;0 group had a significantly larger category than the adults. There are significant differences in category dispersion for {[}i{]}: the adults have tighter categories than many of the child age groups. However, the expected trend of reduced dispersion with age is not observed.
 
 \hypertarget{compensation-for-vocal-tract-morphology}{%
@@ -376,14 +375,13 @@ The vowel data were first normalized using the Lobanov scaling technique. Figure
 adults and children}
 \end{figure}
 
-After scaling the vowels using the two scaling methods, the vowel variability between the children and adults for both sets of normalized vowels (Lobanov and \(\Delta\)F) was measured. Again, for the Lobanov normalization technique separate normalization factors are calculated for F1 and F2 for each speaker. The \(\Delta\)F technique, however, uses a single normalization coefficient for each speaker. We measured the variability of each vowel category for each age group (so three categories per age group) by computing the RMS coefficient, as described in the previous section. This measurement was made separately to the \(\Delta\)F-normalized vowels and the Lobanov-normalized vowels.
-
-The RMS measurement was again used to calculate the difference in dispersion between adults and children. As before, the mean value of each formant, for each vowel category and age group, was computed. Then, the difference between the mean value for the adults and a given child age group was measured. For example, the mean F1 of {[}a{]} was measured over all of the 5;0 children and the mean F1 of {[}a{]} over all of the adults and then the difference between these values was taken. As in the previous section, this step estimated the position of the vowel category in acoustic space. The resultant F1 and F2 measurements were both squared, and then summed. Finally, the square root of the sum was taken.
+After scaling the vowels using the two scaling methods, the vowel variability between the children and adults for both sets of normalized vowels (Lobanov and \(\Delta\)F) was measured. Again, for the Lobanov normalization technique separate normalization factors are calculated for F1 and F2 for each speaker. The \(\Delta\)F technique, however, uses a single normalization coefficient for each speaker. We measured the variability of each vowel category for each age group (so three categories per age group) by computing the category dispersion coefficient, as described in the previous section. This measurement was made separately to the \(\Delta\)F-normalized vowels and the Lobanov-normalized vowels.
+The category dispersion coefficient, made using the Euclidean distance equation described in the previous section, was again used to calculate the difference in dispersion between adults and children. As before, the mean value of each formant, for each vowel category and age group, was computed. Then, the difference between the mean value for the adults and a given child age group was measured. For example, the mean F1 of {[}a{]} was measured over all of the 5;0 children and the mean F1 of {[}a{]} over all of the adults and then the difference between these values was taken. As in the previous section, this step estimated the position of the vowel category in acoustic space. The resultant F1 and F2 measurements were both squared, and then summed. Finally, the square root of the sum was taken.
 
 \begin{figure}
 \centering
 \includegraphics{3_vtl_results_files/figure-latex/rms-dif-figure-1.pdf}
-\caption{\label{fig:rms-dif-figure}Difference between adult and child vowel categories: RMS method}
+\caption{\label{fig:rms-dif-figure}Difference between adult and child vowel categories: Category dispersion method}
 \end{figure}
 
 Figure \ref{fig:rms-dif-figure} displays the difference between the adult and child vowel categories for the two scaling techniques. The left panel of the figure shows the difference between adult and child \(\Delta\)F-normalized categories, or normalization that incorporates just vocal tract length. The right panel shows the difference between adult and child Lobanov-normalized categories, which incorporate individual formants into the normalization procedure. The visual clearly demonstrates that there are larger differences between normalized adult and child vowel categories that take into account individual formants than vocal tract alone. In other words, beyond vocal tract length and even phone identity, there is still additional variability between adults and children to be accounted for, as the larger values in the right panel demonstrate. These differences between Lobanov-normalized categories and \(\Delta\)F-normalized categories will be quantified below. It is important to note that the differences between adult and child vowel categories did nevertheless differ by age and phone. For example, there was a large amount of variation between the adult and 4;0 {[}e{]} category, but less between the adult and 10;0 {[}o{]} category.
@@ -528,15 +526,15 @@ Overall, these results confirm previous research that vocal tract length and pho
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & 0.70 & 0.11 & 1.28 & 0.10 & 2.63 & 0.26 & NA & NA\\
-5 & 0.56 & 0.20 & 1.31 & 0.12 & 2.70 & 0.31 & NA & NA\\
-6 & 0.69 & 0.12 & 1.33 & 0.13 & 2.72 & 0.30 & NA & NA\\
-7 & 0.61 & 0.16 & 1.34 & 0.16 & 2.67 & 0.28 & NA & NA\\
-8 & 0.69 & 0.11 & 1.29 & 0.11 & 2.58 & 0.38 & NA & NA\\
+4 & 0.70 & 0.12 & 1.29 & 0.11 & 2.61 & 0.26 & NA & NA\\
+5 & 0.59 & 0.19 & 1.30 & 0.12 & 2.69 & 0.28 & NA & NA\\
+6 & 0.68 & 0.14 & 1.31 & 0.10 & 2.63 & 0.34 & NA & NA\\
+7 & 0.63 & 0.16 & 1.33 & 0.18 & 2.65 & 0.33 & NA & NA\\
+8 & 0.70 & 0.09 & 1.30 & 0.11 & 2.55 & 0.33 & NA & NA\\
 \addlinespace
-9 & 0.64 & 0.14 & 1.38 & 0.09 & 2.59 & 0.29 & NA & NA\\
-10 & 0.61 & 0.11 & 1.35 & 0.19 & 2.60 & 0.34 & NA & NA\\
-adult & 0.61 & 0.13 & 1.34 & 0.13 & 2.44 & 0.22 & 3.42 & 0.21\\
+9 & 0.62 & 0.19 & 1.36 & 0.08 & 2.54 & 0.29 & NA & NA\\
+10 & 0.60 & 0.11 & 1.34 & 0.18 & 2.62 & 0.34 & NA & NA\\
+adult & 0.64 & 0.15 & 1.35 & 0.14 & 2.44 & 0.21 & 3.43 & 0.21\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -550,14 +548,14 @@ adult & 0.61 & 0.13 & 1.34 & 0.13 & 2.44 & 0.22 & 3.42 & 0.21\\
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
 4 & 0.25 & 0.04 & 2.29 & 0.20 & 2.81 & 0.27 & NA & NA\\
-5 & 0.27 & 0.05 & 2.24 & 0.22 & 2.81 & 0.23 & NA & NA\\
-6 & 0.25 & 0.06 & 2.25 & 0.18 & 2.79 & 0.19 & NA & NA\\
-7 & 0.26 & 0.06 & 2.27 & 0.18 & 2.83 & 0.21 & NA & NA\\
-8 & 0.25 & 0.04 & 2.19 & 0.16 & 2.77 & 0.26 & NA & NA\\
+5 & 0.26 & 0.05 & 2.25 & 0.22 & 2.81 & 0.24 & NA & NA\\
+6 & 0.26 & 0.05 & 2.25 & 0.23 & 2.81 & 0.20 & NA & NA\\
+7 & 0.26 & 0.06 & 2.27 & 0.18 & 2.83 & 0.20 & NA & NA\\
+8 & 0.26 & 0.05 & 2.19 & 0.15 & 2.75 & 0.25 & NA & NA\\
 \addlinespace
-9 & 0.26 & 0.06 & 2.22 & 0.22 & 2.79 & 0.29 & NA & NA\\
-10 & 0.31 & 0.05 & 2.21 & 0.23 & 2.79 & 0.27 & NA & NA\\
-adult & 0.33 & 0.05 & 2.20 & 0.18 & 2.71 & 0.13 & 3.68 & 0.25\\
+9 & 0.26 & 0.06 & 2.24 & 0.22 & 2.87 & 0.29 & NA & NA\\
+10 & 0.32 & 0.06 & 2.20 & 0.21 & 2.80 & 0.28 & NA & NA\\
+adult & 0.33 & 0.05 & 2.21 & 0.19 & 2.72 & 0.16 & 3.64 & 0.27\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -577,7 +575,7 @@ Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 8 & 0.36 & 0.04 & 0.83 & 0.24 & 2.63 & 0.29 & NA & NA\\
 \addlinespace
 9 & 0.30 & 0.08 & 0.98 & 0.27 & 2.81 & 0.37 & NA & NA\\
-10 & 0.32 & 0.06 & 1.04 & 0.22 & 2.92 & 0.39 & NA & NA\\
+10 & 0.32 & 0.06 & 1.03 & 0.22 & 2.93 & 0.37 & NA & NA\\
 adult & 0.37 & 0.07 & 0.91 & 0.33 & 2.54 & 0.23 & 3.52 & 0.38\\
 \bottomrule
 \end{tabular}
@@ -617,15 +615,15 @@ adult & 0.18 ( 0.12 ) 0.01 - 0.63 & 0.12 ( 0.07 ) 0.01 - 0.3 & 0.29 ( 0.21 ) 0.0
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
 Age & [a] & [i] & [u] & [a]  & [i]  & [u] \\
 \midrule
-4 & 0.26 & 0.18 & 0.15 & 0.09 & 0.13 & 0.30\\
-5 & 0.30 & 0.19 & 0.14 & 0.10 & 0.16 & 0.15\\
-6 & 0.23 & 0.22 & 0.22 & 0.12 & 0.12 & 0.38\\
-7 & 0.26 & 0.23 & 0.23 & 0.13 & 0.09 & 0.42\\
-8 & 0.17 & 0.19 & 0.18 & 0.18 & 0.13 & 0.41\\
+4 & 0.25 & 0.18 & 0.15 & 0.09 & 0.13 & 0.30\\
+5 & 0.28 & 0.20 & 0.14 & 0.09 & 0.16 & 0.15\\
+6 & 0.22 & 0.22 & 0.22 & 0.11 & 0.12 & 0.38\\
+7 & 0.28 & 0.24 & 0.23 & 0.14 & 0.09 & 0.42\\
+8 & 0.17 & 0.19 & 0.18 & 0.20 & 0.13 & 0.41\\
 \addlinespace
-9 & 0.22 & 0.22 & 0.20 & 0.11 & 0.10 & 0.26\\
-10 & 0.22 & 0.17 & 0.17 & 0.16 & 0.09 & 0.34\\
-adult & 0.27 & 0.15 & 0.22 & 0.13 & 0.07 & 0.34\\
+9 & 0.26 & 0.22 & 0.20 & 0.11 & 0.10 & 0.26\\
+10 & 0.25 & 0.17 & 0.16 & 0.16 & 0.10 & 0.34\\
+adult & 0.27 & 0.15 & 0.22 & 0.14 & 0.07 & 0.34\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -633,7 +631,7 @@ adult & 0.27 & 0.15 & 0.22 & 0.13 & 0.07 & 0.34\\
 \begin{figure}
 \centering
 \includegraphics{3_vtl_results_files/figure-latex/delta-disp-fig-1.pdf}
-\caption{\label{fig:delta-disp-fig}Group-level RMS by age and phone}
+\caption{\label{fig:delta-disp-fig}Group-level category dispersion by age and phone}
 \end{figure}
 
 \hypertarget{models-predicting-dispersion-measured-via-cov}{%
@@ -650,14 +648,14 @@ adult & 0.27 & 0.15 & 0.22 & 0.13 & 0.07 & 0.34\\
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-Intercept & -3.23 & 0.19 & -17.22 & 0.00 & -2.87,-3.6\\
-10 & 0.71 & 0.27 & 2.68 & 0.01 & 1.23,0.19\\
-4 & 0.69 & 0.27 & 2.54 & 0.01 & 1.23,0.16\\
-5 & 0.93 & 0.26 & 3.60 & 0.00 & 1.44,0.43\\
-6 & 0.57 & 0.25 & 2.24 & 0.03 & 1.07,0.07\\
-7 & 0.31 & 0.23 & 1.33 & 0.18 & 0.76,-0.15\\
-8 & 0.69 & 0.25 & 2.76 & 0.01 & 1.18,0.2\\
-9 & 0.49 & 0.29 & 1.66 & 0.10 & 1.06,-0.09\\
+Intercept & -3.15 & 0.20 & -15.60 & 0.00 & -2.76,-3.55\\
+10 & 0.69 & 0.27 & 2.59 & 0.01 & 1.22,0.17\\
+4 & 0.68 & 0.28 & 2.44 & 0.01 & 1.22,0.13\\
+5 & 0.97 & 0.27 & 3.65 & 0.00 & 1.49,0.45\\
+6 & 0.62 & 0.26 & 2.44 & 0.01 & 1.13,0.12\\
+7 & 0.25 & 0.23 & 1.07 & 0.29 & 0.71,-0.21\\
+8 & 0.71 & 0.25 & 2.80 & 0.01 & 1.21,0.21\\
+9 & 0.58 & 0.30 & 1.97 & 0.05 & 1.16,0\\
 \bottomrule
 \end{tabular}
 
@@ -677,13 +675,13 @@ Intercept & -3.23 & 0.19 & -17.22 & 0.00 & -2.87,-3.6\\
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-Intercept & -1.77 & 0.20 & -8.63 & 0.00 & -1.37,-2.17\\
-10 & -0.76 & 0.31 & -2.46 & 0.01 & -0.15,-1.37\\
+Intercept & -1.77 & 0.20 & -8.66 & 0.00 & -1.37,-2.17\\
+10 & -0.78 & 0.31 & -2.54 & 0.01 & -0.18,-1.39\\
 4 & -0.28 & 0.41 & -0.68 & 0.50 & 0.52,-1.08\\
-5 & -0.54 & 0.31 & -1.74 & 0.08 & 0.07,-1.15\\
+5 & -0.54 & 0.31 & -1.75 & 0.08 & 0.07,-1.14\\
 6 & 0.10 & 0.31 & 0.34 & 0.74 & 0.71,-0.5\\
 7 & 0.01 & 0.27 & 0.06 & 0.96 & 0.54,-0.51\\
-8 & -1.22 & 0.30 & -4.10 & 0.00 & -0.64,-1.81\\
+8 & -1.22 & 0.30 & -4.12 & 0.00 & -0.64,-1.81\\
 9 & -0.14 & 0.31 & -0.46 & 0.64 & 0.46,-0.75\\
 \bottomrule
 \end{tabular}
@@ -704,15 +702,15 @@ Intercept & -1.77 & 0.20 & -8.63 & 0.00 & -1.37,-2.17\\
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & 1.00 & 0.48 & -0.64 & 0.28 & -0.37 & 1.04 & NA & NA\\
-5 & 1.05 & 1.22 & -0.56 & 0.35 & -0.16 & 0.92 & NA & NA\\
-6 & 1.54 & 0.60 & -0.48 & 0.32 & 0.10 & 1.20 & NA & NA\\
-7 & 1.30 & 1.03 & -0.58 & 0.25 & -0.48 & 1.08 & NA & NA\\
-8 & 1.29 & 0.33 & -0.48 & 0.29 & -0.37 & 1.17 & NA & NA\\
+4 & 1.05 & 0.46 & -0.63 & 0.28 & -0.40 & 1.06 & NA & NA\\
+5 & 1.22 & 1.11 & -0.53 & 0.29 & -0.24 & 0.87 & NA & NA\\
+6 & 1.49 & 0.63 & -0.48 & 0.27 & -0.39 & 1.03 & NA & NA\\
+7 & 1.31 & 1.17 & -0.58 & 0.23 & -0.55 & 1.26 & NA & NA\\
+8 & 1.37 & 0.49 & -0.53 & 0.29 & -0.27 & 1.01 & NA & NA\\
 \addlinespace
-9 & 1.56 & 0.77 & -0.42 & 0.29 & -0.52 & 0.78 & NA & NA\\
-10 & 1.55 & 0.67 & -0.44 & 0.46 & -0.48 & 0.96 & NA & NA\\
-adult & 1.37 & 0.90 & -0.28 & 0.31 & -0.69 & 1.04 & -0.41 & 0.84\\
+9 & 1.49 & 0.87 & -0.43 & 0.26 & -0.77 & 0.94 & NA & NA\\
+10 & 1.68 & 0.65 & -0.43 & 0.50 & -0.50 & 0.98 & NA & NA\\
+adult & 1.46 & 1.11 & -0.33 & 0.27 & -0.69 & 0.97 & -0.4 & 0.73\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -725,15 +723,15 @@ adult & 1.37 & 0.90 & -0.28 & 0.31 & -0.69 & 1.04 & -0.41 & 0.84\\
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & -0.88 & 0.18 & 1.14 & 0.40 & 0.33 & 1.15 & NA & NA\\
-5 & -0.64 & 0.26 & 0.98 & 0.43 & 0.24 & 1.01 & NA & NA\\
-6 & -0.82 & 0.22 & 0.99 & 0.37 & 0.21 & 0.71 & NA & NA\\
-7 & -0.81 & 0.32 & 1.04 & 0.24 & 0.39 & 0.91 & NA & NA\\
-8 & -0.94 & 0.28 & 0.97 & 0.34 & 0.41 & 0.95 & NA & NA\\
+4 & -0.88 & 0.19 & 1.15 & 0.39 & 0.51 & 1.04 & NA & NA\\
+5 & -0.71 & 0.24 & 0.99 & 0.48 & 0.24 & 1.06 & NA & NA\\
+6 & -0.79 & 0.25 & 1.00 & 0.40 & 0.35 & 0.72 & NA & NA\\
+7 & -0.79 & 0.29 & 1.03 & 0.19 & 0.41 & 0.89 & NA & NA\\
+8 & -0.88 & 0.26 & 0.96 & 0.33 & 0.41 & 0.94 & NA & NA\\
 \addlinespace
-9 & -0.68 & 0.18 & 1.05 & 0.22 & 0.50 & 0.76 & NA & NA\\
-10 & -0.78 & 0.30 & 0.97 & 0.37 & 0.02 & 1.08 & NA & NA\\
-adult & -0.79 & 0.42 & 1.30 & 0.28 & 0.52 & 0.77 & 0.63 & 0.77\\
+9 & -0.68 & 0.22 & 1.05 & 0.27 & 0.55 & 0.73 & NA & NA\\
+10 & -0.73 & 0.35 & 1.00 & 0.39 & -0.07 & 1.07 & NA & NA\\
+adult & -0.78 & 0.41 & 1.26 & 0.31 & 0.45 & 0.86 & 0.59 & 0.79\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -746,15 +744,15 @@ adult & -0.79 & 0.42 & 1.30 & 0.28 & 0.52 & 0.77 & 0.63 & 0.77\\
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & -0.55 & 0.27 & -1.47 & 0.21 & -0.79 & 0.67 & NA & NA\\
-5 & -0.24 & 0.35 & -1.05 & 0.21 & -0.84 & 1.37 & NA & NA\\
-6 & -0.42 & 0.30 & -1.15 & 0.35 & -0.51 & 1.34 & NA & NA\\
-7 & -0.29 & 0.62 & -1.09 & 0.53 & -0.14 & 1.24 & NA & NA\\
-8 & -0.46 & 0.23 & -1.03 & 0.41 & -0.20 & 1.14 & NA & NA\\
+4 & -0.57 & 0.23 & -1.47 & 0.21 & -0.79 & 0.83 & NA & NA\\
+5 & -0.27 & 0.32 & -1.07 & 0.21 & -0.80 & 1.30 & NA & NA\\
+6 & -0.42 & 0.33 & -1.13 & 0.33 & -0.41 & 1.34 & NA & NA\\
+7 & -0.32 & 0.51 & -1.09 & 0.56 & -0.09 & 1.23 & NA & NA\\
+8 & -0.46 & 0.26 & -1.11 & 0.32 & -0.17 & 1.10 & NA & NA\\
 \addlinespace
-9 & -0.57 & 0.34 & -0.93 & 0.36 & 0.17 & 1.21 & NA & NA\\
-10 & -0.58 & 0.42 & -0.90 & 0.30 & 0.67 & 1.25 & NA & NA\\
-adult & -0.48 & 0.54 & -0.95 & 0.51 & -0.29 & 0.86 & 0.07 & 1.24\\
+9 & -0.58 & 0.32 & -0.94 & 0.38 & 0.23 & 1.21 & NA & NA\\
+10 & -0.59 & 0.47 & -0.91 & 0.34 & 0.80 & 1.05 & NA & NA\\
+adult & -0.46 & 0.56 & -0.93 & 0.52 & -0.39 & 0.88 & 0.09 & 1.3\\
 \bottomrule
 \end{tabular}
 \end{table}

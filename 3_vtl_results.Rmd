@@ -685,8 +685,8 @@ ggplot(sub_delta_normed, aes(f2_delta_norm, f1_delta_norm, color = Phone, label=
         plot.caption = element_text(size=9)) 
 ```
 
-```{r, measure deltaf dispersion via rms-1st time, include=FALSE}
-# separate rms coefficient for each vowel and age group
+```{r, measure deltaf dispersion via cat disp-1st time, include=FALSE}
+# separate cat disp coefficient for each vowel and age group
 vowels_rms <- delta_normed %>%
   group_by(age_yrs, Phone) %>%
   filter(Phone != 'e' & Phone != 'o') %>% # we only report on peripheral vowels
@@ -694,10 +694,10 @@ vowels_rms <- delta_normed %>%
          category_mean_F2=mean(f2_delta_norm, na.rm=T)) %>%
   mutate(rms = sqrt((f1_delta_norm - category_mean_F1)^2 +
                (f2_delta_norm - category_mean_F2)^2)) %>%
-  mutate(rms_mean_sep_phones = round(mean(rms, na.rm=T),2)) %>%  # the mean rms value for each phone and age group
+  mutate(rms_mean_sep_phones = round(mean(rms, na.rm=T),2)) %>%  # the mean cat disp value for each phone and age group
   mutate(rms_sd_sep_phones = round(sd(rms, na.rm=T),2))
 
-# separate rms coefficient for each vowel and each *speaker*, for statistical modeling
+# separate cat disp coefficient for each vowel and each *speaker*, for statistical modeling
 vowels_rms_spkr <- delta_normed %>%
   group_by(spkr, Phone) %>%
   filter(Phone != 'e' & Phone != 'o') %>% # we only report on peripheral vowels
@@ -705,13 +705,13 @@ vowels_rms_spkr <- delta_normed %>%
          category_mean_F2=mean(f2_delta_norm, na.rm=T)) %>%
   mutate(rms = sqrt((f1_delta_norm - category_mean_F1)^2 +
                (f2_delta_norm - category_mean_F2)^2)) %>%
-  mutate(rms_mean_sep_phones = round(mean(rms, na.rm=T),2)) %>%  # the mean rms value for each phone and spkr
+  mutate(rms_mean_sep_phones = round(mean(rms, na.rm=T),2)) %>%  # the mean cat disp value for each phone and spkr
   mutate(rms_sd_sep_phones = round(sd(rms, na.rm=T),2))
 ```
 
 The comparison of within-category variability across age groups was conducted on the $\Delta$F-normalized formant values. Figure \@ref(fig:plot-raw-deltaf-data) plots the median $\Delta$F-normalized formant values. (See Tables \@ref(tab:deltaf-measurement-table-a) - \@ref(tab:deltaf-measurement-table-u) in the appendices for descriptive statistics of $\Delta$F-normalized formant values.)  As the vowel plots demonstrate, speakers tend to have larger within-category dispersion for [a] and [u] than [i]. However, the pattern by age is less identifiable. With speaker-intrinsic information (ratio between formant frequencies on a by-speaker basis) factored out, which is what $\Delta$F does, adults appear to have somewhat tighter, more compact acoustic vowel categories for some vowels, particularly [i], than even the eldest children. Other vowels show little difference by age, or, in the case of [u], do not seem to follow a strict linear pattern of decreased variation with age.
 
-To better ascertain the developmental pattern of vowel variability, we computed the acoustic dispersion of each vowel category across the age groups. To do so, the root mean square (RMS) of each vowel category was computed, which resulted in a single coefficient per vowel category.^[Previous work has used the Coefficient of Variation (CoV) to measure vowel category dispersion in children (e.g. Lee et al. (1999)). The CoV is the ratio of the standard deviation of the mean to the mean of each phoneme category (Bradlow, 1995; Eguchi & Hirsch, 1965; Lee et al., 1999). One disadvantage of the CoV is that, unlike the RMS technique, separate coefficients must be computed for each acoustic dimension so the result is the CoV of F1, CoV of F2, etc.. Nevertheless, to facilitate comparison of this study with previous work, the CoV for each vowel category was also computed (for F1 and F2). In brief, the dispersion results measured via the CoV replicated the dispersion results measured via the RMS coefficient: the only reliable differences by age when measuring dispersion via CoV were for the F2 of [i]. Full dispersion results using the CoV, including descriptive statistics and statistical modeling for the CoV for each formant, are included in the appendices.] This RMS coefficient reflects both the *mean* value of each vowel category and its *variability* along the F1 and F2 dimensions. To calculate the RMS, the following steps were taken. 
+To better ascertain the developmental pattern of vowel variability, we computed the acoustic dispersion of each vowel category across the age groups. To do so, the average Euclidian distance in F1/F2 space from the vowel mean location was computed, which resulted in a single coefficient per vowel category.^[Previous work has used the Coefficient of Variation (CoV) to measure vowel category dispersion in children (e.g. Lee et al. (1999)). The CoV is the ratio of the standard deviation of the mean to the mean of each phoneme category (Bradlow, 1995; Eguchi & Hirsch, 1965; Lee et al., 1999). One disadvantage of the CoV is that, unlike the category dispersion technique, separate coefficients must be computed for each acoustic dimension so the result is the CoV of F1, CoV of F2, etc.. Nevertheless, to facilitate comparison of this study with previous work, the CoV for each vowel category was also computed (for F1 and F2). In brief, the dispersion results measured via the CoV replicated the dispersion results measured via the category dispersion coefficient: the only reliable differences by age when measuring dispersion via CoV were for the F2 of [i]. Full dispersion results using the CoV, including descriptive statistics and statistical modeling for the CoV for each formant, are included in the appendices.] This category dispersion coefficient, measured using the Euclidean distance, reflects both the *mean* value of each vowel category and its *variability* along the F1 and F2 dimensions. To calculate the category dispersion coefficient, the following steps were taken. 
 
 1. First, the mean value of F1 and F2, for each age group's vowel categories, was measured (e.g. the mean F1 and F2 of [a] for the five-year-olds). This step estimated the position of the vowel category in acoustic space. 
 
@@ -722,12 +722,12 @@ To better ascertain the developmental pattern of vowel variability, we computed 
 These steps were repeated for each vowel production. The mean value of all productions of a given vowel from each age group was then computed (e.g. five-year-olds' [a] productions). This mean value reflected the dispersion of the category in space. The result was a single variability coefficient for each vowel category, for each child age group, that factored in both formants. 
 
 
-```{r, prepare group RMS tables, include=FALSE}
+```{r, prepare group cat disp tables, include=FALSE}
 vowels_rms_tbl_alldata <- vowels_rms %>%  
   group_by(age_yrs, Phone) %>%
   select(age_yrs, Phone, rms) %>%
   distinct() %>%
-  na.omit %>% # one 9;0 and one adult only have one [a] token over which rms was calculated so those emerge as NA
+  na.omit %>% # one 9;0 and one adult only have one [a] token over which cat disp was calculated so those emerge as NA
   summarize(rms_mean=round(mean(rms, na.rm=T),2),
             rms_sd=round(sd(rms, na.rm=T),2),
             rms_min=round(min(rms, na.rm=T),2),
@@ -750,13 +750,13 @@ knitr::kable(vowels_rms_tbl_alldata, caption = 'Vowel category dispersion by age
   footnote(general = "4-10 observations per speaker")
 ```
 
-```{r, delta-disp-fig-RMS, fig.cap="Group-level RMS by age and phone", echo=FALSE}
-delta_normed_plot_grp <- vowels_rms %>% #for group-level RMS
+```{r, delta-disp-fig-RMS, fig.cap="Group-level category dispersion by age and phone", echo=FALSE}
+delta_normed_plot_grp <- vowels_rms %>% #for group-level cat disp
   filter(Phone!='o' & Phone!='e') %>%
   select(Age, Phone, rms_mean_sep_phones) %>%
   distinct() 
 
-delta_normed_plot_spkr <- vowels_rms_spkr %>% # for individual RMS
+delta_normed_plot_spkr <- vowels_rms_spkr %>% # for individual cat disp
   filter(Phone!='o' & Phone!='e') %>%
   select(Age, Phone, spkr, rms_mean_sep_phones) %>%
   distinct() 
@@ -769,7 +769,7 @@ ggplot(delta_normed_plot_spkr, aes(Age, rms_mean_sep_phones, color = Phone, labe
   scale_color_manual(values = c('purple3', 'turquoise4', 'goldenrod')) +
   labs(y="RMS",
        #title = "CoV by age, phone, and formant",
-       caption = "Where a higher y-value indicates greater dispersion/variability \n Large shapes represent age group RMS; raw data represent individual RMS") +
+       caption = "Where a higher y-value indicates greater dispersion/variability \n Large shapes represent age group category dispersion; raw data represent individual category dispersion") +
   ylim(0,0.6) + 
   theme(axis.text.x = element_text(face="bold", size=11),
         axis.text.y = element_text(face ='bold', size=11),
@@ -779,13 +779,13 @@ ggplot(delta_normed_plot_spkr, aes(Age, rms_mean_sep_phones, color = Phone, labe
         title=element_text(face="bold", size=13))
 ```
 
-The average RMS by phone and age group is listed in Table \@ref(tab:RMS-tbl-group) and Figure \@ref(fig:delta-disp-fig-RMS). Recall that these measurements were made over vowel categories containing 4-10 observations per speaker.^[RMS measurements computed over *all* data points, including those categories with less than 4 data points, are included in Table \@ref(tab:delta-disp-tbl-group-alldata) in the appendices. Overall there were no large differences observed between the RMS values computed over 4-10 tokens per vowel category and those computed over the entire dataset. However, standardizing the number of tokens per category avoids skewing in the event of data loss.] The results demonstrate that the RMS 1) varies by phone and 2) does not always decrease linearly with age. For [a], the RMS does not appear to decrease by age at all - the average RMS for [a] for the adults was 0.18, similar to the values for almost all the other age groups. The RMS for [u] is highest for the 7;0 and 8;0 groups, again not showing clear evidence of a linear decrease in variability. The RMS for [i] showed more change with age and was smallest in the adults (.13) and highest in the 4;0 and 5;0 groups (0.22 and 0.25, respectively). 
+The average category dispersion by phone and age group is listed in Table \@ref(tab:RMS-tbl-group) and Figure \@ref(fig:delta-disp-fig-RMS). Recall that these measurements were made over vowel categories containing 4-10 observations per speaker.^[Category dispersion measurements computed over *all* data points, including those categories with less than 4 data points, are included in Table \@ref(tab:delta-disp-tbl-group-alldata) in the appendices. Overall there were no large differences observed between the category dispersion values computed over 4-10 tokens per vowel category and those computed over the entire dataset. However, standardizing the number of tokens per category avoids skewing in the event of data loss.] The results demonstrate that category dispersion 1) varies by phone and 2) does not always decrease linearly with age. For [a], the category dispersion coefficient does not appear to decrease by age at all - the average category dispersion for [a] for the adults was 0.18, similar to the values for almost all the other age groups. The category dispersion for [u] is highest for the 7;0 and 8;0 groups, again not showing clear evidence of a linear decrease in variability. The category dispersion for [i] showed more change with age and was smallest in the adults (.13) and highest in the 4;0 and 5;0 groups (0.22 and 0.25, respectively). 
 
-The RMS of each vowel category was additionally computed on a by-speaker basis. This resulted in a single RMS coefficient for each vowel from each speaker. Computing the RMS on an individual speaker level generated a datapoint for each speaker's three vowel categories which were used to fit a series of models predicting vowel category dispersion.
+The category dispersion of each vowel category was additionally computed on a by-speaker basis. This resulted in a single category dispersion coefficient for each vowel from each speaker. Computing the category dispersion on an individual speaker level generated a datapoint for each speaker's three vowel categories which were used to fit a series of models predicting vowel category dispersion.
 
 ### Fitting models to predict within-category variability
 
-```{r, fit RMS models, include=FALSE}
+```{r, fit cat disp models, include=FALSE}
 # change the reference level to adults b/c that's our questions of interest
 vowels_rms_spkr$age_yrs <- relevel(vowels_rms_spkr$age_yrs, ref = "adult")
 
@@ -851,7 +851,7 @@ anova(u_m2, u_m1) #  improves - adults are smaller than one age group (7;0)
 summary(u_m2) 
 ```
 
-```{r, prepare RMS model tbls, include=FALSE}
+```{r, prepare cat disp model tbls, include=FALSE}
 rms_glmms <- rbind(broom.mixed::tidy(a_m2, 
                                      effects = c("fixed"), 
                                      conf.int = TRUE) %>% 
@@ -906,30 +906,29 @@ rms_glmms$'95% CI' <- as.factor(rms_glmms$'95% CI')
 papaja::apa_table(rms_glmms %>% 
                     filter(model=='a_model') %>% 
                     select(-model), 
-                  caption="Model predicting RMS for [a]") 
+                  caption="Model predicting category dispersion for [a]") 
 ```
 
 ```{r, RMS-model-tbl-i, echo=FALSE}
 papaja::apa_table(rms_glmms %>% 
                     filter(model=='i_model') %>% 
                     select(-model), 
-                  caption="Model predicting RMS for [i]") 
+                  caption="Model predicting category dispersion for [i]") 
 ```
 
 ```{r, RMS-model-tbl-u, echo=FALSE}
 papaja::apa_table(rms_glmms %>% 
                     filter(model=='u_model') %>% 
                     select(-model), 
-                  caption="Model predicting RMS for [u]") 
+                  caption="Model predicting category dispersion for [u]") 
 ```
 
 
-For the RMS model fitting, we fit generalized linear mixed effects models (GLMMs) because the outcome variable - the individual speaker level RMS - was necessarily non-negative and left-skewed. Gamma GLMMs were fit using a log linking function to appropriately model the skewed, non-Gaussian distribution of the residual. Three models were fit, one for each phone (/a, i, u/). The model fitting procedure followed the same procedure for all models: first the baseline model, with just the random effect of **Speaker**, was fit. Then, the parameter **Age Group** (4, 5, 6, 7, 8, 9, 10, adult) was added.
+For the category dispersion model fitting, we fit generalized linear mixed effects models (GLMMs) because the outcome variable - the individual speaker level category dispersion - was necessarily non-negative and left-skewed. Gamma GLMMs were fit using a log linking function to appropriately model the skewed, non-Gaussian distribution of the residual. Three models were fit, one for each phone (/a, i, u/). The model fitting procedure followed the same procedure for all models: first the baseline model, with just the random effect of **Speaker**, was fit. Then, the parameter **Age Group** (4, 5, 6, 7, 8, 9, 10, adult) was added.
 
-The parameter **Age Group** was not significant for the model predicting the RMS of [a].^[The baseline models for [a] and [i] did not converge, but the models with the addition of **Age Group** did. Consequently, potential differences between age groups were determined solely from model summary outputs for those two models.] For the [u] model, only one child age group, the 7;0 group, differed significantly from the adults: the 7;0 had a significantly larger [u] category than the adults. The parameter **Age Group** did improve upon the model predicting the RMS of [i]. The model summaries for each phone model, with the **Age Group** parameter added, are presented in Tables \@ref(tab:RMS-model-tbl-a)-\@ref(tab:RMS-model-tbl-u). 
+The parameter **Age Group** was not significant for the model predicting the category dispersion of [a].^[The baseline models for [a] and [i] did not converge, but the models with the addition of **Age Group** did. Consequently, potential differences between age groups were determined solely from model summary outputs for those two models.] For the [u] model, only one child age group, the 7;0 group, differed significantly from the adults: the 7;0 had a significantly larger [u] category than the adults. The parameter **Age Group** did improve upon the model predicting the category dispersion of [i]. The model summaries for each phone model, with the **Age Group** parameter added, are presented in Tables \@ref(tab:RMS-model-tbl-a)-\@ref(tab:RMS-model-tbl-u). 
 
-As the beta coefficients in the [i] model summary demonstrates, there were some differences by age group in category dispersion for the [i] phoneme. Specifically, the adults had significantly tighter [i] categories than all children except for the 7;0 and 9;0 groups (the difference between the adults and 7;0 only approached significance). Furthermore, as the beta coefficients demonstrate, the children's RMS values did not necessarily decrease linearly with age - the 10;0 group, for example, actually had significantly more dispersed categories than the 9;0 group. 
-
+As the beta coefficients in the [i] model summary demonstrates, there were some significant differences by age group in category dispersion for the [i] phoneme. Specifically, the adults had significantly tighter [i] categories than all children except for the 7;0 and 9;0 groups (the difference between the adults and 7;0 only approached significance). Furthermore, as the beta coefficients demonstrate, the children's RMS values did not necessarily decrease linearly with age - the 10;0 group, for example, actually had significantly more dispersed categories than the 9;0 group. 
 Overall, this analysis shows that there are not significant differences in category dispersion between adults and children for [a]. For [u], only the 7;0 group had a significantly larger category than the adults. There are significant differences in category dispersion for [i]: the adults have tighter categories than many of the child age groups. However, the expected trend of reduced dispersion with age is not observed. 
 
 ## Compensation for vocal tract morphology
@@ -1013,12 +1012,11 @@ ggplot(sub_lobanov_normed, aes(lob_f2, lob_f1, color = Phone, label=Phone), alph
   title=element_text(face="bold", size=16)) 
 ```
 
-After scaling the vowels using the two scaling methods, the vowel variability between the children and adults for both sets of normalized vowels (Lobanov and $\Delta$F) was measured. Again, for the Lobanov normalization technique separate normalization factors are calculated for F1 and F2 for each speaker. The $\Delta$F technique, however, uses a single normalization coefficient for each speaker. We measured the variability of each vowel category for each age group (so three categories per age group) by computing the RMS coefficient, as described in the previous section. This measurement was made separately to the $\Delta$F-normalized vowels and the Lobanov-normalized vowels. 
+After scaling the vowels using the two scaling methods, the vowel variability between the children and adults for both sets of normalized vowels (Lobanov and $\Delta$F) was measured. Again, for the Lobanov normalization technique separate normalization factors are calculated for F1 and F2 for each speaker. The $\Delta$F technique, however, uses a single normalization coefficient for each speaker. We measured the variability of each vowel category for each age group (so three categories per age group) by computing the category dispersion coefficient, as described in the previous section. This measurement was made separately to the $\Delta$F-normalized vowels and the Lobanov-normalized vowels. 
+The category dispersion coefficient, made using the Euclidean distance equation described in the previous section, was again used to calculate the difference in dispersion between adults and children. As before, the mean value of each formant, for each vowel category and age group, was computed. Then, the difference between the mean value for the adults and a given child age group was measured. For example, the mean F1 of [a] was measured over all of the 5;0 children and the mean F1 of [a] over all of the adults and then the difference between these values was taken. As in the previous section, this step estimated the position of the vowel category in acoustic space. The resultant F1 and F2 measurements were both squared, and then summed. Finally, the square root of the sum was taken. 
 
-The RMS measurement was again used to calculate the difference in dispersion between adults and children. As before, the mean value of each formant, for each vowel category and age group, was computed. Then, the difference between the mean value for the adults and a given child age group was measured. For example, the mean F1 of [a] was measured over all of the 5;0 children and the mean F1 of [a] over all of the adults and then the difference between these values was taken. As in the previous section, this step estimated the position of the vowel category in acoustic space. The resultant F1 and F2 measurements were both squared, and then summed. Finally, the square root of the sum was taken. 
-
-```{r, measure deltaf dispersion via rms, include=FALSE}
-# separate rms coefficient for each vowel and age group
+```{r, measure deltaf dispersion via cat disp, include=FALSE}
+# separate cat disp coefficient for each vowel and age group
 # we include all five vowels because we eventually loop them into the analysis
 # first calculate a mean for each formant and phone for the adults
 delta_rms_adults <- delta_normed %>%
@@ -1043,7 +1041,7 @@ delta_rms_adults <- delta_normed %>%
 
 delta_rms_kids <- delta_normed %>%
   filter(Age!='adult') %>%
-  group_by(Age, a_articulator) %>% # calculate rms separately based on age and artic status
+  group_by(Age, a_articulator) %>% # calculate cat disp separately based on age and artic status
   mutate(mean_f1_a = mean(f1_delta_norm[Phone=='a'], na.rm=TRUE)) %>% 
   mutate(mean_f2_a = mean(f2_delta_norm[Phone=='a'], na.rm=TRUE)) %>% 
   
@@ -1060,7 +1058,7 @@ delta_rms_kids <- delta_normed %>%
   mutate(mean_f2_o = mean(f2_delta_norm[Phone=='o'], na.rm=TRUE)) %>% 
   ungroup()
 
-# get difference between means and calculate rms
+# get difference between means and calculate cat disp
 delta_space_rms <- delta_rms_kids %>%
   filter(Age !='adult') %>%
   select(Age, spkr, a_articulator, mean_f1_a, mean_f2_a, mean_f1_i,
@@ -1089,8 +1087,8 @@ delta_space_rms <- delta_rms_kids %>%
 delta_space_rms$Phone <- plyr::mapvalues(delta_space_rms$Phone, from=c("diff_rms_a", "diff_rms_i", "diff_rms_u", "diff_rms_e", "diff_rms_o"), to=c("a", "i", "u", "e", "o"))
 ```
 
-```{r, measure lobanov dispersion via rms, include=FALSE}
-# separate rms coefficient for each vowel and age group
+```{r, measure lobanov dispersion via cat disp, include=FALSE}
+# separate cat disp coefficient for each vowel and age group
 # first calculate a mean for each formant and phone for the adults
 lob_rms_adults <- lobanov_normed %>%
   filter(Age=='adult') %>%
@@ -1132,7 +1130,7 @@ lob_rms_kids <- lobanov_normed %>%
   mutate(mean_f2_o = mean(lob_f2[Phone=='o'], na.rm=TRUE)) %>% 
   ungroup()
 
-# now calculate child rms and get difference between adult and child rms 
+# now calculate child rms and get difference between adult and child cat disp 
 lob_space_rms <- lob_rms_kids %>%
   filter(Age !='adult') %>%
   select(Age, spkr, a_articulator, mean_f1_a, mean_f2_a, mean_f1_i,
@@ -1160,7 +1158,7 @@ lob_space_rms <- lob_rms_kids %>%
 lob_space_rms$Phone <- plyr::mapvalues(lob_space_rms$Phone, from=c("diff_rms_a", "diff_rms_i", "diff_rms_u", "diff_rms_e", "diff_rms_o"), to=c("a", "i", "u", "e", "o")) 
 ```
 
-```{r, rms-dif-figure, fig.cap="Difference between adult and child vowel categories: RMS method", echo=FALSE}
+```{r, rms-dif-figure, fig.cap="Difference between adult and child vowel categories: Category dispersion method", echo=FALSE}
 # combine lobanov and deltaf to compare differences between variability in normalization methods
 # first make delimiting variables
 lob_space_rms$method <- "Lobanov"
@@ -1557,7 +1555,7 @@ delta_all_all <- rbind(delta_all_adults, delta_all_kids)
 
 delta_normed_all <- merge(delta_all_all, vls_normed_rmvd, by = c("spkr", "Phone", "f1_delta_norm", "f2_delta_norm", "f3_delta_norm", "f4_delta_norm"))
 
-# # calculate group-level RMS
+# # calculate group-level cat disp
 # we only calculate on peripheral vowels
 delta_group_mean_alldata <- delta_normed_all %>% 
   filter(Phone !='e' & Phone !='o') %>%
@@ -1634,7 +1632,7 @@ knitr::kable(delta_table_final, caption = 'Average CoV by formant and vowel for 
   kableExtra::kable_styling(latex_options = "hold_position")
 ```
 
-```{r, delta-disp-fig, fig.cap="Group-level RMS by age and phone", echo=FALSE}
+```{r, delta-disp-fig, fig.cap="Group-level category dispersion by age and phone", echo=FALSE}
 delta_normed_plot_grp <- delta_normed_rmvd2 %>% #for group-level CoV
   filter(Phone!='o' & Phone!='e') %>%
   select(Age, Phone, F1_CoV, F2_CoV) %>%
