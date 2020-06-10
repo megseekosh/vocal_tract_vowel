@@ -32,46 +32,6 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -116,7 +76,7 @@
 
 \title{Chapter 1 Results: vocalic development}
 \author{Meg Cychosz}
-\date{18 May 2020}
+\date{10 June 2020}
 
 \begin{document}
 \maketitle
@@ -127,33 +87,6 @@
 The primary research question in this study asks if children's vowel variation decreases over the course of development in a language with a three-vowel contrast. The results for the first experiment begin with descriptive statistics of the participants' formant patterns by age, prior to speaker normalization, for the three phonemic vowels /a, i, u/. Then, the formant measures for these phonemic vowels are normalized using one of the scaling techniques - \(\Delta\)F - described in the methods section. Using these normalized data, a series of models are fit to predict the degree of participants' vowel dispersion and determine if vowel variability decreases over the course of development, as predicted in previous work (Eguchi \& Hirsch, 1962; Lee et al., 1999; Ménard et al., 2007). The second half of the results section is devoted to comparing the uniform (\(\Delta\)F) and non-uniform (Lobanov) formant frequency scaling techniques.
 
 All analyses were conducted in the RStudio computing environment (version: 1.2.5019; \{rstudio\}. Data visualizations were created with \{ggplot2\} \{ggplot2\}. Modeling was conducted using the \{lme4\} \{lme4\}, \{lmerTest\} \{lmertest\}, and \{glmmTMB\} \{glmmtmb\} packages and summaries were presented with \{papaja\} \{papaja\} and \{Stargazer\} \{stargazer\}. Tests of residual normality were conducted using the \{normtest\} package \{normtest\}. The significance of potential model parameters was determined using a combination of log-likelihood comparisons between models, AIC estimations, and p-values procured from model summaries. In all models, continuous predictors were mean-centered to facilitate model interpretation.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# we need a quick estimation of the vowels removed for the 40 children analyzed in chapter 4}
-\NormalTok{ch4_children <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'c81'}\NormalTok{,}\StringTok{'c65'}\NormalTok{,}\StringTok{'c72'}\NormalTok{,}\StringTok{'c76'}\NormalTok{, }\StringTok{'c56'}\NormalTok{, }\StringTok{'c29'}\NormalTok{, }\StringTok{'c39'}\NormalTok{, }\StringTok{'c59'}\NormalTok{, }\StringTok{'c42'}\NormalTok{, }\StringTok{'c49'}\NormalTok{, }\StringTok{'c55'}\NormalTok{,}\StringTok{'c33'}\NormalTok{,}\StringTok{'c26'}\NormalTok{,}\StringTok{'c22'}\NormalTok{,}\StringTok{'c44'}\NormalTok{,}\StringTok{'c53'}\NormalTok{,}\StringTok{'c32'}\NormalTok{,}\StringTok{'c47'}\NormalTok{,}\StringTok{'c37'}\NormalTok{,}\StringTok{'c21'}\NormalTok{,}\StringTok{'c38'}\NormalTok{,}\StringTok{'c11'}\NormalTok{,}\StringTok{'c57'}\NormalTok{,}\StringTok{'c34'}\NormalTok{,}\StringTok{'c45'}\NormalTok{,}\StringTok{'c8'}\NormalTok{, }\StringTok{'c58'}\NormalTok{,}\StringTok{'c10'}\NormalTok{,}\StringTok{'c41'}\NormalTok{,}\StringTok{'c20'}\NormalTok{,}\StringTok{'c14'}\NormalTok{,}\StringTok{'c12'}\NormalTok{,}\StringTok{'c7'}\NormalTok{,}\StringTok{'c16'}\NormalTok{,}\StringTok{'c36'}\NormalTok{,}\StringTok{'c61'}\NormalTok{,}\StringTok{'c23'}\NormalTok{,}\StringTok{'c30'}\NormalTok{,}\StringTok{'c60'}\NormalTok{,}\StringTok{'c19'}\NormalTok{)}
-
-\NormalTok{vls2_ch4 <-}\StringTok{ }\NormalTok{vls2[vls2}\OperatorTok{$}\NormalTok{spkr }\OperatorTok{%in%}\StringTok{ }\NormalTok{ch4_children,] }\CommentTok{# get the vowel data}
-
-\NormalTok{vls_removed_ch4 <-}\StringTok{ }\NormalTok{vls2_ch4 }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(non_na_count_f1}\OperatorTok{<}\DecValTok{4} \OperatorTok{|}\StringTok{ }\NormalTok{non_na_count_f2}\OperatorTok{<}\DecValTok{4}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# all categories with less than 4 measurements}
-\StringTok{  }\KeywordTok{select}\NormalTok{(Phone, spkr) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{distinct}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\NormalTok{nrow }\CommentTok{#17 tokens removed}
-
-\CommentTok{# how many phones*age removed?}
-\NormalTok{vls_removed_tbl_ch4 <-}\StringTok{ }\NormalTok{vls2_ch4 }\OperatorTok{%>%}\StringTok{ }\CommentTok{# how many categories removed? (by phone and age)}
-\StringTok{  }\KeywordTok{filter}\NormalTok{(non_na_count_f1}\OperatorTok{<}\DecValTok{4} \OperatorTok{|}\StringTok{ }\NormalTok{non_na_count_f2}\OperatorTok{<}\DecValTok{4}\NormalTok{) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{select}\NormalTok{(spkr, Age, Phone) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{distinct}\NormalTok{() }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{group_by}\NormalTok{(Age, Phone) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{count}\NormalTok{() }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{spread}\NormalTok{(}\DataTypeTok{key =} \StringTok{"Phone"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"n"}\NormalTok{) }
-
-\CommentTok{# now create the data to output}
-\KeywordTok{write.csv}\NormalTok{(vls_removed_tbl_ch4, }\StringTok{'/Users/Meg/Box Sync/Dissertation/Experiment_3/results/vls_removed_tbl_ch4.csv'}\NormalTok{, }\DataTypeTok{row.names =} \OtherTok{FALSE}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
 
 \subsection{Vowel category dispersion}
 
@@ -194,15 +127,15 @@ To further ensure that we were accurately comparing between age groups - since y
 \toprule
 Age & F1 (MAD) & F2 (MAD) & F3 (MAD) & F4 (MAD) & n\\
 \midrule
-4 & 551.38 ( 302 ) & 2086.4 ( 922 ) & 3952.37 ( 424 ) & NA ( NA ) & 206\\
-5 & 494.73 ( 194 ) & 2244.96 ( 1028 ) & 3896.36 ( 475 ) & NA ( NA ) & 284\\
-6 & 483.44 ( 205 ) & 2119.71 ( 1131 ) & 3706.18 ( 402 ) & NA ( NA ) & 315\\
-7 & 485.63 ( 155 ) & 2243.72 ( 1104 ) & 3810.44 ( 398 ) & NA ( NA ) & 495\\
-8 & 494.64 ( 208 ) & 2323.6 ( 1037 ) & 3673.99 ( 391 ) & NA ( NA ) & 295\\
+4 & 551.38 ( 302 ) & 2080.49 ( 932 ) & 3959.64 ( 423 ) & NA ( NA ) & 205\\
+5 & 491.6 ( 187 ) & 2258.95 ( 1009 ) & 3887.07 ( 482 ) & NA ( NA ) & 288\\
+6 & 483.44 ( 209 ) & 2152.89 ( 1114 ) & 3711.44 ( 415 ) & NA ( NA ) & 313\\
+7 & 484.25 ( 143 ) & 2338.16 ( 1053 ) & 3811.39 ( 396 ) & NA ( NA ) & 488\\
+8 & 500.69 ( 217 ) & 2229.63 ( 1073 ) & 3660.5 ( 390 ) & NA ( NA ) & 293\\
 \addlinespace
-9 & 459.92 ( 165 ) & 1892.8 ( 1094 ) & 3616.57 ( 550 ) & NA ( NA ) & 193\\
-10 & 480.96 ( 158 ) & 1943.71 ( 1024 ) & 3503.2 ( 401 ) & NA ( NA ) & 305\\
-adult & 460.91 ( 121 ) & 1604.87 ( 927 ) & 2953.89 ( 300 ) & 4053.8 ( 372 ) & 325\\
+9 & 471.67 ( 179 ) & 1916.46 ( 1094 ) & 3668.35 ( 556 ) & NA ( NA ) & 193\\
+10 & 485.78 ( 159 ) & 1948.64 ( 1022 ) & 3501.85 ( 421 ) & NA ( NA ) & 303\\
+adult & 460.91 ( 123 ) & 1603.28 ( 931 ) & 2952.27 ( 289 ) & 4060.2 ( 375 ) & 328\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -217,13 +150,13 @@ Age & F1 range & F2 range & F3 range & F4 range\\
 \midrule
 4 & 266-1474 & 774-3782 & 2938-4659 & NA-NA\\
 5 & 284-1451 & 797-3767 & 2343-4652 & NA-NA\\
-6 & 145-1264 & 783-3722 & 2607-4528 & NA-NA\\
-7 & 268-1203 & 794-3790 & 2501-4606 & NA-NA\\
-8 & 245-1377 & 808-3579 & 2526-4422 & NA-NA\\
+6 & 145-1290 & 783-3767 & 2607-4528 & NA-NA\\
+7 & 273-1163 & 794-3734 & 2501-4606 & NA-NA\\
+8 & 245-1216 & 808-3635 & 2526-4422 & NA-NA\\
 \addlinespace
-9 & 248-1182 & 847-3672 & 2237-4597 & NA-NA\\
-10 & 249-1144 & 796-3541 & 2630-4447 & NA-NA\\
-adult & 243-1091 & 701-2929 & 2397-3606 & 2832-4726\\
+9 & 248-1219 & 847-3672 & 2237-4597 & NA-NA\\
+10 & 249-1076 & 796-3541 & 2630-4447 & NA-NA\\
+adult & 262-1091 & 701-2929 & 2231-3668 & 2832-4726\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -280,119 +213,83 @@ Table \ref{tab:vtl-length-table} summarizes vocal tract length and the ratio bet
 \hypertarget{measuring-within-category-variability}{%
 \subsubsection{Measuring within-category variability}\label{measuring-within-category-variability}}
 
-\begin{table}[!h]
-
-\caption{\label{tab:delta-disp-tbl-group}Group-level average CoV by formant and vowel for children and adults}
-\centering
-\begin{tabular}[t]{lrrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{3}{c}{F1} & \multicolumn{3}{c}{F2} \\
-\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
-Age & [a] & [i] & [u] & [a]  & [i]  & [u] \\
-\midrule
-4 & 0.26 & 0.18 & 0.15 & 0.09 & 0.13 & 0.30\\
-5 & 0.28 & 0.20 & 0.14 & 0.10 & 0.16 & 0.15\\
-6 & 0.22 & 0.22 & 0.22 & 0.09 & 0.10 & 0.38\\
-7 & 0.25 & 0.23 & 0.23 & 0.14 & 0.09 & 0.42\\
-8 & 0.19 & 0.20 & 0.18 & 0.18 & 0.12 & 0.41\\
-\addlinespace
-9 & 0.25 & 0.22 & 0.20 & 0.11 & 0.10 & 0.26\\
-10 & 0.25 & 0.17 & 0.17 & 0.16 & 0.09 & 0.34\\
-adult & 0.28 & 0.16 & 0.22 & 0.12 & 0.07 & 0.34\\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \begin{figure}
 \centering
 \includegraphics{3_vtl_results_files/figure-latex/plot-raw-deltaf-data-1.pdf}
 \caption{\label{fig:plot-raw-deltaf-data}DeltaF-normalized vowels by age: adults and children}
 \end{figure}
 
+The comparison of within-category variability across age groups was conducted on the \(\Delta\)F-normalized formant values. Figure \ref{fig:plot-raw-deltaf-data} plots the median \(\Delta\)F-normalized formant values. (See Tables \ref{tab:deltaf-measurement-table-a} - \ref{tab:deltaf-measurement-table-u} in the appendices for descriptive statistics of \(\Delta\)F-normalized formant values.) As the vowel plots demonstrate, speakers tend to have larger within-category dispersion for {[}a{]} and {[}u{]} than {[}i{]}. However, the pattern by age is less identifiable. With speaker-intrinsic information (ratio between formant frequencies on a by-speaker basis) factored out, which is what \(\Delta\)F does, adults appear to have somewhat tighter, more compact acoustic vowel categories for some vowels, particularly {[}i{]}, than even the eldest children. Other vowels show little difference by age, or, in the case of {[}u{]}, do not seem to follow a strict linear pattern of decreased variation with age.
+
+To better ascertain the developmental pattern of vowel variability, we computed the acoustic dispersion of each vowel category across the age groups. To do so, the root mean square (RMS) of each vowel category was computed, which resulted in a single coefficient per vowel category.\footnote{Previous work has used the Coefficient of Variation (CoV) to measure vowel category dispersion in children (e.g.~Lee et al.~(1999)). The CoV is the ratio of the standard deviation of the mean to the mean of each phoneme category (Bradlow, 1995; Eguchi \& Hirsch, 1965; Lee et al., 1999). One disadvantage of the CoV is that, unlike the RMS technique, separate coefficients must be computed for each acoustic dimension so the result is the CoV of F1, CoV of F2, etc.. Nevertheless, to facilitate comparison of this study with previous work, the CoV for each vowel category was also computed (for F1 and F2). In brief, the dispersion results measured via the CoV replicated the dispersion results measured via the RMS coefficient: the only reliable differences by age when measuring dispersion via CoV were for the F2 of {[}i{]}. Full dispersion results using the CoV, including descriptive statistics and statistical modeling for the CoV for each formant, are included in the appendices.} This RMS coefficient reflects both the \emph{mean} value of each vowel category and its \emph{variability} along the F1 and F2 dimensions. To calculate the RMS, the following steps were taken.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  First, the mean value of F1 and F2, for each age group's vowel categories, was measured (e.g.~the mean F1 and F2 of {[}a{]} for the five-year-olds). This step estimated the position of the vowel category in acoustic space.
+\item
+  Next, the difference between each individual formant measurement and its vowel category mean was computed and the difference was squared. This was done for F1 and F2. The resulting F1 and F2 coefficients were summed.
+\item
+  Finally, the square root of the sum was taken.
+\end{enumerate}
+
+These steps were repeated for each vowel production. The mean value of all productions of a given vowel from each age group was then computed (e.g.~five-year-olds' {[}a{]} productions). This mean value reflected the dispersion of the category in space. The result was a single variability coefficient for each vowel category, for each child age group, that factored in both formants.
+
 \begin{table}[!h]
 
-\caption{\label{tab:delta-disp-tbl-spkr}Individual-level CoV by formant and vowel for children and adults:F1}
+\caption{\label{tab:RMS-tbl-group}Vowel category dispersion by age group and phone}
 \centering
 \begin{tabular}[t]{llll}
 \toprule
 Age & [a] mean (SD) range & [i] & [u]\\
 \midrule
-4 & 0.19 ( 0.13 ) 0.04 - 0.48 & 0.11 ( 0.09 ) 0.01 - 0.23 & 0.13 ( 0.01 ) 0.12 - 0.14\\
-5 & 0.25 ( 0.17 ) 0.05 - 0.52 & 0.15 ( 0.07 ) 0.04 - 0.26 & 0.1 ( 0.07 ) 0.01 - 0.22\\
-6 & 0.17 ( 0.12 ) 0.03 - 0.38 & 0.15 ( 0.1 ) 0.04 - 0.32 & 0.19 ( 0.09 ) 0.03 - 0.31\\
-7 & 0.22 ( 0.11 ) 0.04 - 0.46 & 0.14 ( 0.09 ) 0.04 - 0.42 & 0.17 ( 0.09 ) 0.04 - 0.39\\
-8 & 0.12 ( 0.09 ) 0.04 - 0.28 & 0.09 ( 0.06 ) 0.01 - 0.2 & 0.05 ( 0.04 ) 0.01 - 0.12\\
+4 & 0.17 ( 0.11 ) 0.02 - 0.57 & 0.22 ( 0.2 ) 0.03 - 0.95 & 0.19 ( 0.13 ) 0.03 - 0.44\\
+5 & 0.19 ( 0.1 ) 0.02 - 0.46 & 0.25 ( 0.25 ) 0.03 - 1.36 & 0.13 ( 0.08 ) 0.03 - 0.42\\
+6 & 0.19 ( 0.11 ) 0 - 0.53 & 0.2 ( 0.17 ) 0 - 0.95 & 0.3 ( 0.25 ) 0.05 - 1.08\\
+7 & 0.2 ( 0.1 ) 0.04 - 0.53 & 0.16 ( 0.12 ) 0.02 - 0.67 & 0.38 ( 0.28 ) 0 - 1.38\\
+8 & 0.19 ( 0.21 ) 0.01 - 1.15 & 0.19 ( 0.2 ) 0.01 - 1.28 & 0.36 ( 0.22 ) 0.1 - 1.07\\
 \addlinespace
-9 & 0.21 ( 0.14 ) 0.04 - 0.47 & 0.11 ( 0.06 ) 0.04 - 0.17 & 0.15 ( 0.07 ) 0.05 - 0.23\\
-10 & 0.16 ( 0.14 ) 0.03 - 0.43 & 0.11 ( 0.07 ) 0.02 - 0.21 & 0.08 ( 0.06 ) 0.02 - 0.16\\
-adult & 0.18 ( 0.15 ) 0.04 - 0.49 & 0.13 ( 0.05 ) 0.06 - 0.22 & 0.17 ( 0.1 ) 0.03 - 0.32\\
+9 & 0.16 ( 0.13 ) 0.02 - 0.71 & 0.19 ( 0.15 ) 0.02 - 0.65 & 0.22 ( 0.14 ) 0.03 - 0.73\\
+10 & 0.21 ( 0.15 ) 0.01 - 0.86 & 0.17 ( 0.12 ) 0.01 - 0.49 & 0.25 ( 0.27 ) 0.03 - 1.51\\
+adult & 0.2 ( 0.12 ) 0.02 - 0.59 & 0.13 ( 0.07 ) 0.01 - 0.32 & 0.29 ( 0.2 ) 0.03 - 1.1\\
 \bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[!h]
-
-\caption{\label{tab:delta-disp-tbl-spkr}Individual-level CoV by formant and vowel for children and adults:F2}
-\centering
-\begin{tabular}[t]{llll}
-\toprule
-Age & [a] mean (SD) range & [i] & [u]\\
-\midrule
-4 & 0.07 ( 0.02 ) 0.05 - 0.09 & 0.1 ( 0.08 ) 0.03 - 0.25 & 0.26 ( 0.13 ) 0.11 - 0.37\\
-5 & 0.08 ( 0.05 ) 0.04 - 0.21 & 0.13 ( 0.11 ) 0.03 - 0.34 & 0.13 ( 0.06 ) 0.07 - 0.25\\
-6 & 0.07 ( 0.03 ) 0.03 - 0.13 & 0.07 ( 0.03 ) 0.04 - 0.12 & 0.27 ( 0.12 ) 0.06 - 0.43\\
-7 & 0.11 ( 0.06 ) 0.03 - 0.24 & 0.06 ( 0.04 ) 0.01 - 0.2 & 0.32 ( 0.14 ) 0.08 - 0.53\\
-8 & 0.12 ( 0.11 ) 0.04 - 0.39 & 0.1 ( 0.08 ) 0.02 - 0.34 & 0.16 ( 0.1 ) 0.02 - 0.32\\
-\addlinespace
-9 & 0.09 ( 0.07 ) 0.04 - 0.23 & 0.08 ( 0.06 ) 0.03 - 0.22 & 0.18 ( 0.1 ) 0.07 - 0.33\\
-10 & 0.12 ( 0.08 ) 0.03 - 0.26 & 0.08 ( 0.04 ) 0.05 - 0.14 & 0.26 ( 0.19 ) 0.08 - 0.52\\
-adult & 0.08 ( 0.06 ) 0.02 - 0.22 & 0.05 ( 0.02 ) 0.01 - 0.08 & 0.2 ( 0.14 ) 0.04 - 0.48\\
-\bottomrule
+\multicolumn{4}{l}{\textit{Note: }}\\
+\multicolumn{4}{l}{4-10 observations per speaker}\\
 \end{tabular}
 \end{table}
 
 \begin{figure}
 \centering
-\includegraphics{3_vtl_results_files/figure-latex/delta-disp-fig-1.pdf}
-\caption{\label{fig:delta-disp-fig}Group-level CoV by age and phone}
+\includegraphics{3_vtl_results_files/figure-latex/delta-disp-fig-RMS-1.pdf}
+\caption{\label{fig:delta-disp-fig-RMS}Group-level RMS by age and phone}
 \end{figure}
 
-The comparison of within-category variability across age groups was conducted on the \(\Delta\)F-normalized formant values. Figure \ref{fig:plot-raw-deltaf-data} plots the median \(\Delta\)F-normalized formant values. (See Tables \ref{tab:deltaf-measurement-table-a} - \ref{tab:deltaf-measurement-table-u} in the appendices for descriptive statistics of \(\Delta\)F-normalized formant values.) As the vowel plots demonstrate, speakers tend to have larger within-category dispersion for {[}a{]} and {[}u{]} than {[}i{]}. However, the pattern by age is less identifiable. With speaker-intrinsic information (ratio between formant frequencies on a by-speaker basis) factored out, which is what \(\Delta\)F does, adults appear to have somewhat tighter, more compact acoustic vowel categories for some vowels, particularly {[}i{]}, than even the eldest children. Other vowels show little difference by age, or, in the case of {[}u{]}, do not seem to follow a strict linear pattern of decreased variation with age.
+The average RMS by phone and age group is listed in Table \ref{tab:RMS-tbl-group} and Figure \ref{fig:delta-disp-fig-RMS}. Recall that these measurements were made over vowel categories containing 4-10 observations per speaker.\footnote{RMS measurements computed over \emph{all} data points, including those categories with less than 4 data points, are included in Table \ref{tab:delta-disp-tbl-group-alldata} in the appendices. Overall there were no large differences observed between the RMS values computed over 4-10 tokens per vowel category and those computed over the entire dataset. However, standardizing the number of tokens per category avoids skewing in the event of data loss.} The results demonstrate that the RMS 1) varies by phone and 2) does not always decrease linearly with age. For {[}a{]}, the RMS does not appear to decrease by age at all - the average RMS for {[}a{]} for the adults was 0.18, similar to the values for almost all the other age groups. The RMS for {[}u{]} is highest for the 7;0 and 8;0 groups, again not showing clear evidence of a linear decrease in variability. The RMS for {[}i{]} showed more change with age and was smallest in the adults (.13) and highest in the 4;0 and 5;0 groups (0.22 and 0.25, respectively).
 
-To better ascertain the developmental pattern of vowel variability, we computed the acoustic dispersion of each vowel category across the age groups. To do so, we followed previous work in computing the Coefficient of Variation (CoV) for F1 and F2 of each vowel category in the \(\Delta\)F-normalized formants. The CoV is the ratio of the standard deviation of the mean to the mean of each phoneme category (Bradlow, 1995; Eguchi \& Hirsch, 1965; Lee et al., 1999). Again, this was computed individually for F1 and F2 of each phoneme for each age group.
-
-Recall that these measurements were made over vowel categories containing 4-10 observations per speaker. The group- and individual speaker-level CoVs computed over \emph{all} data, including those categories with less than 4 data points, are included in the appendices (CoV by age group: Table \ref{tab:delta-disp-tbl-group-alldata} and CoV by individual speaker: Tables \ref{tab:delta-disp-tbl-spkr-alldata-f1} and \ref{tab:delta-disp-tbl-spkr-alldata-f2}); overall we did not notice a large difference between the CoVs computed over 4-10 tokens per vowel category and those computed over the entire dataset. However, we felt that standardizing the number of tokens per category would result in the least bias across the age groups.
-
-The average CoV for F1 and F2 by phone and age group is listed in Table \ref{tab:delta-disp-tbl-group} and plotted in Figure \ref{fig:delta-disp-fig} (following Lee et al, (1999), we report the average CoV measurements and their SDs, not the median or MAD): the results demonstrate that the CoV for by phone and formant 1) varies by phone and 2) does not always decrease linearly with age. For the F1 of {[}a{]}, the CoV does not appear to decrease by age - the average {[}a{]} CoV for the adults was 0.24 but 0.18 for the 8;0 group. The F1 CoV for {[}u{]} is highest for the 6;0-7;0 groups, again not showing clear evidence of a linear decrease in variability. The F2 CoV for {[}i{]} and {[}a{]} show limited change with age, though the CoV is smallest for {[}i{]} in the adults.
-
-We additionally computed a CoV on a by-speaker basis. This resulted in a single coefficient for F1 and F2 from each speaker, for each vowel. The mean of these CoVs, SDs, and ranges are listed in Table \ref{tab:delta-disp-tbl-spkr}. These individual speaker-level CoVs are also plotted as the raw data in Figure \ref{fig:delta-disp-fig}. Once we computed the CoV on an individual level, we then had a datapoint for each speaker's three vowel categories which we used to fit a series of models predicting the CoVs for F1 and F2.
+The RMS of each vowel category was additionally computed on a by-speaker basis. This resulted in a single RMS coefficient for each vowel from each speaker. Computing the RMS on an individual speaker level generated a datapoint for each speaker's three vowel categories which were used to fit a series of models predicting vowel category dispersion.
 
 \hypertarget{fitting-models-to-predict-within-category-variability}{%
 \subsubsection{Fitting models to predict within-category variability}\label{fitting-models-to-predict-within-category-variability}}
 
-For the CoV model fitting, we fit generalized linear mixed effects models (GLMMs) because the outcome variable - the individual speaker level CoV - was necessarily non-negative and right-skewed. Gamma GLMMs were fit using a log linking function to appropriately model the skewed, non-Gaussian distribution of the residual. A total of six models were fit, one for each combination of formant (F1 and F2) and phone (/a, i, u/). The model fitting procedure followed the same procedure for all models: first the baseline model, with just the random effect of \textbf{Speaker}, was fit. Then, the parameters of interest were added, with the primary parameter of interest ( \textbf{Age} ) added last. First, \textbf{Gender} was added, then \textbf{Age Group} (4, 5, 6, 7, 8, 9, 10, adult). The effect of \textbf{Gender} did not improve upon any of the baseline (with only \textbf{Speaker}) model fits. This suggests that individual speaker-level CoV does not reliably differ between any of the studied age groups in this population and the parameter \textbf{Gender} waas not further analyzed.
-
-The parameter \textbf{Age Group} improved upon baseline model fits for two models: the model predicting F2 of {[}i{]} and the model predicting F1 of {[}u{]}. The model summary for the F2 of {[}i{]} is shown in Table \ref{tab:f2-i-model} and the summary for the F1 of {[}u{]} is in Table \ref{tab:f1-u-model}. As the beta coefficients in the model summaries demonstrate, there were some differences by age group in category dispersion. However, these differences only approached significance reliably - meaning that almost all age groups significantly differed from the adults - in the F2 of {[}i{]} model. Furthermore, as the beta coefficients demonstrate, the children's CoV values did not decrease linearly with age, with older children necessarily demonstrating more adult-like dispersion.
-
 \begin{table}[tbp]
 
 \begin{center}
 \begin{threeparttable}
 
-\caption{\label{tab:f2-i-model}Model predicting CoV for F2 of [i]}
+\caption{\label{tab:RMS-model-tbl-a}Model predicting RMS for [a]}
 
 \begin{tabular}{llllll}
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-Intercept & -3.09 & 0.19 & -16.37 & 0.00 & -2.72,-3.46\\
-10 & 0.59 & 0.26 & 2.27 & 0.02 & 1.1,0.08\\
-4 & 0.64 & 0.27 & 2.37 & 0.02 & 1.17,0.11\\
-5 & 0.88 & 0.26 & 3.43 & 0.00 & 1.39,0.38\\
-6 & 0.47 & 0.25 & 1.89 & 0.06 & 0.96,-0.02\\
-7 & 0.20 & 0.23 & 0.90 & 0.37 & 0.65,-0.24\\
-8 & 0.63 & 0.25 & 2.54 & 0.01 & 1.11,0.14\\
-9 & 0.49 & 0.29 & 1.71 & 0.09 & 1.05,-0.07\\
+Intercept & -2.11 & 0.15 & -14.19 & 0.00 & -1.82,-2.4\\
+10 & 0.19 & 0.21 & 0.88 & 0.38 & 0.6,-0.23\\
+4 & 0.07 & 0.21 & 0.33 & 0.74 & 0.48,-0.34\\
+5 & 0.14 & 0.21 & 0.67 & 0.50 & 0.54,-0.26\\
+6 & 0.01 & 0.21 & 0.03 & 0.97 & 0.41,-0.4\\
+7 & 0.12 & 0.19 & 0.64 & 0.52 & 0.49,-0.25\\
+8 & -0.10 & 0.22 & -0.45 & 0.65 & 0.34,-0.54\\
+9 & 0.00 & 0.22 & -0.01 & 0.99 & 0.44,-0.44\\
 \bottomrule
 \end{tabular}
 
@@ -406,20 +303,20 @@ Intercept & -3.09 & 0.19 & -16.37 & 0.00 & -2.72,-3.46\\
 \begin{center}
 \begin{threeparttable}
 
-\caption{\label{tab:f1-u-model}Model predicting CoV for F1 of [u]}
+\caption{\label{tab:RMS-model-tbl-i}Model predicting RMS for [i]}
 
 \begin{tabular}{llllll}
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-Intercept & -1.77 & 0.21 & -8.61 & 0.00 & -1.36,-2.17\\
-10 & -0.73 & 0.31 & -2.37 & 0.02 & -0.13,-1.34\\
-4 & -0.28 & 0.41 & -0.68 & 0.50 & 0.53,-1.08\\
-5 & -0.54 & 0.31 & -1.74 & 0.08 & 0.07,-1.15\\
-6 & 0.10 & 0.31 & 0.34 & 0.74 & 0.71,-0.5\\
-7 & 0.01 & 0.27 & 0.06 & 0.96 & 0.54,-0.51\\
-8 & -1.22 & 0.30 & -4.09 & 0.00 & -0.64,-1.81\\
-9 & -0.14 & 0.31 & -0.46 & 0.65 & 0.47,-0.75\\
+Intercept & -2.49 & 0.17 & -15.06 & 0.00 & -2.17,-2.82\\
+10 & 0.54 & 0.23 & 2.31 & 0.02 & 1,0.08\\
+4 & 0.62 & 0.24 & 2.58 & 0.01 & 1.09,0.15\\
+5 & 0.79 & 0.23 & 3.46 & 0.00 & 1.24,0.34\\
+6 & 0.45 & 0.22 & 2.03 & 0.04 & 0.89,0.01\\
+7 & 0.24 & 0.20 & 1.18 & 0.24 & 0.64,-0.16\\
+8 & 0.42 & 0.22 & 1.91 & 0.06 & 0.85,-0.01\\
+9 & 0.27 & 0.26 & 1.06 & 0.29 & 0.78,-0.23\\
 \bottomrule
 \end{tabular}
 
@@ -428,14 +325,47 @@ Intercept & -1.77 & 0.21 & -8.61 & 0.00 & -1.36,-2.17\\
 
 \end{table}
 
-Thus, although there are some trends apparent in the descriptive statistics of the individual-level and group-level CoVs, as well as in the vowel plots, overall the modeling suggests that category dispersion does not differ significantly between the adults and the child age groups. Furthermore, when there are statistically reliable differences between adults and children for within-category dispersion, these differences do not diminish with age.
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:RMS-model-tbl-u}Model predicting RMS for [u]}
+
+\begin{tabular}{llllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
+\midrule
+Intercept & -1.77 & 0.23 & -7.59 & 0.00 & -1.31,-2.23\\
+10 & 0.11 & 0.33 & 0.32 & 0.75 & 0.75,-0.53\\
+4 & -0.05 & 0.43 & -0.10 & 0.92 & 0.81,-0.9\\
+5 & -0.45 & 0.34 & -1.33 & 0.18 & 0.21,-1.12\\
+6 & 0.31 & 0.33 & 0.94 & 0.35 & 0.95,-0.33\\
+7 & 0.59 & 0.28 & 2.10 & 0.04 & 1.15,0.04\\
+8 & -0.27 & 0.33 & -0.81 & 0.42 & 0.38,-0.91\\
+9 & -0.12 & 0.33 & -0.38 & 0.71 & 0.52,-0.77\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+For the RMS model fitting, we fit generalized linear mixed effects models (GLMMs) because the outcome variable - the individual speaker level RMS - was necessarily non-negative and left-skewed. Gamma GLMMs were fit using a log linking function to appropriately model the skewed, non-Gaussian distribution of the residual. Three models were fit, one for each phone (/a, i, u/). The model fitting procedure followed the same procedure for all models: first the baseline model, with just the random effect of \textbf{Speaker}, was fit. Then, the parameter \textbf{Age Group} (4, 5, 6, 7, 8, 9, 10, adult) was added.
+
+The parameter \textbf{Age Group} was not significant for the model predicting the RMS of {[}a{]}.\footnote{The baseline models for {[}a{]} and {[}i{]} did not converge, but the models with the addition of \textbf{Age Group} did. Consequently, potential differences between age groups were determined solely from model summary outputs for those two models.} For the {[}u{]} model, only one child age group, the 7;0 group, differed significantly from the adults: the 7;0 had a significantly larger {[}u{]} category than the adults. The parameter \textbf{Age Group} did improve upon the model predicting the RMS of {[}i{]}. The model summaries for each phone model, with the \textbf{Age Group} parameter added, are presented in Tables \ref{tab:RMS-model-tbl-a}-\ref{tab:RMS-model-tbl-u}.
+
+As the beta coefficients in the {[}i{]} model summary demonstrates, there were some differences by age group in category dispersion for the {[}i{]} phoneme. Specifically, the adults had significantly tighter {[}i{]} categories than all children except for the 7;0 and 9;0 groups (the difference between the adults and 7;0 only approached significance). Furthermore, as the beta coefficients demonstrate, the children's RMS values did not necessarily decrease linearly with age - the 10;0 group, for example, actually had significantly more dispersed categories than the 9;0 group.
+
+Overall, this analysis shows that there are not significant differences in category dispersion between adults and children for {[}a{]}. For {[}u{]}, only the 7;0 group had a significantly larger category than the adults. There are significant differences in category dispersion for {[}i{]}: the adults have tighter categories than many of the child age groups. However, the expected trend of reduced dispersion with age is not observed.
 
 \hypertarget{compensation-for-vocal-tract-morphology}{%
 \subsection{Compensation for vocal tract morphology}\label{compensation-for-vocal-tract-morphology}}
 
-Having addressed the first objective of this study, the secondary research question asks if uniform formant frequency scaling adequately factors out anatomical differences between children and adults. If a comparison of uniform and non-uniform formant frequency scaling techniques shows similar results, this may demonstrate that children compensate articulatorily for their vocal tract morphology during vowel production. If, however, a comparison of the two scaling techniques shows large differences between child and adult within-category variability, this suggests that there are additional sources that explain the differences between adults and children, beyond phone identity and anatomical difference.
+Having addressed the first objective of this study, the secondary research question asks if uniform formant frequency scaling adequately factors out anatomical differences between children and adults. If a comparison of uniform and non-uniform formant frequency scaling techniques results in similar formant measurements, this may demonstrate that children compensate articulatorily for their vocal tract morphology during vowel production. If, however, a comparison of the two scaling techniques shows large differences between child and adult within-category variability, this suggests that there are additional sources that explain the differences between adults and children, beyond phone identity and anatomical difference.
 
-To evaluate this question, the vowel data are normalized using two formant scaling techniques - uniform (\(\Delta\)F) and non-uniform (Lobanov), as described in the methods section. For this analysis, the allophonic vowels {[}e, o{]} are included, in addition to the phonemic vowels /a, i, u/. The difference in category variability between the scaling techniques is then compared: if there is additional, unexplained variability present in the Lobanov-normalized vowels - meaning there is additional variability after scaling the formants uniformly (accounting for vocal tract length) and factoring in phone identity - then these results would suggest that another factor, such as articulatory configuration, may differ between the speakers. Such a result would suggest the children may not always compensate for the ratio between their supraglottal cavities during vowel production.
+To evaluate this question, the vowel data were normalized using two formant scaling techniques - one uniform (\(\Delta\)F) and one non-uniform (Lobanov), as previously described. For this analysis, the allophonic vowels {[}e, o{]} are included, in addition to the phonemic vowels /a, i, u/. The difference in category variability between the scaling techniques is then compared: if there is additional, unexplained variability present in the Lobanov-normalized vowels - meaning there is additional variability after scaling the formants uniformly (accounting for vocal tract length) and factoring in phone identity - then these results would suggest that another factor, such as articulatory configuration, may differ between the speakers. Such a result would suggest the children may not always compensate for the ratio between their supraglottal cavities during vowel production.
 
 The vowel data were first normalized using the Lobanov scaling technique. Figure \ref{fig:plot-raw-lobanov-data} plots the median Lobanov-normalized formant values (for phonemes) by phone and age group and Tables \ref{tab:lobanov-meas-tbl-a}-\ref{tab:lobanov-meas-tbl-u} in the appendices list the descriptive values for the phonemes /a, i, u/. See Tables \ref{tab:deltaf-measurement-table-a}-\ref{tab:deltaf-measurement-table-u} in the appendices, and Figure \ref{fig:plot-raw-deltaf-data} in the previous section, for the \(\Delta\)F-normalized formant values.
 
@@ -446,17 +376,9 @@ The vowel data were first normalized using the Lobanov scaling technique. Figure
 adults and children}
 \end{figure}
 
-After scaling the vowels using the two scaling methods, the vowel variability between the children and adults for both sets of normalized vowels (Lobanov and \(\Delta\)F) was measured. Again, for the Lobanov normalization technique separate normalization factors are calculated for F1 and F2 for each speaker. The \(\Delta\)F technique, however, uses a single normalization coefficient for each speaker. We measured the variability of each vowel category for each age group (so three categories per age group) using a single coefficient that reflects both the \emph{mean} value of each vowel category and the \emph{variability} of each category along the F1 and F2 dimensions. To calculate this coefficient, we took the following steps.
+After scaling the vowels using the two scaling methods, the vowel variability between the children and adults for both sets of normalized vowels (Lobanov and \(\Delta\)F) was measured. Again, for the Lobanov normalization technique separate normalization factors are calculated for F1 and F2 for each speaker. The \(\Delta\)F technique, however, uses a single normalization coefficient for each speaker. We measured the variability of each vowel category for each age group (so three categories per age group) by computing the RMS coefficient, as described in the previous section. This measurement was made separately to the \(\Delta\)F-normalized vowels and the Lobanov-normalized vowels.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  First, we measured the difference between the mean value of each vowel category for the adults and a given child age group. For example, we measured the mean F1 of {[}a{]} over all of the 5;0 children and the mean F1 of {[}a{]} over all of the adults and then we took the difference between these values. This calculation was performed for the F1 and F2 measures for each vowel category. This step estimated the position of the vowel category in acoustic space.
-\item
-  For the next step, we took the root mean square of the difference between the vowel categories for F1 and F2 (calculated in step one). Finally, these root mean square calculations for F1 and F2 were summed. This step estimated the standard deviation of the vowel category (disperion of the category in space).
-\end{enumerate}
-
-These steps resulted in a single coefficient for each vowel category, for each child age group, that factored in both formants. These steps were applied separately to the \(\Delta\)F-normalized vowels and the Lobanov-normalized vowels.
+The RMS measurement was again used to calculate the difference in dispersion between adults and children. As before, the mean value of each formant, for each vowel category and age group, was computed. Then, the difference between the mean value for the adults and a given child age group was measured. For example, the mean F1 of {[}a{]} was measured over all of the 5;0 children and the mean F1 of {[}a{]} over all of the adults and then the difference between these values was taken. As in the previous section, this step estimated the position of the vowel category in acoustic space. The resultant F1 and F2 measurements were both squared, and then summed. Finally, the square root of the sum was taken.
 
 \begin{figure}
 \centering
@@ -464,20 +386,20 @@ These steps resulted in a single coefficient for each vowel category, for each c
 \caption{\label{fig:rms-dif-figure}Difference between adult and child vowel categories: RMS method}
 \end{figure}
 
-Figure \ref{fig:rms-dif-figure} displays the difference between the adult and child vowel categories for the two scaling techniques. The left panel of the figure shows the difference between adult and child \(\Delta\)F-normalized categories, or normalization that incorporates just vocal tract length. The right panel shows the difference between adult and child Lobanov-normalized categories, which incorporate individual formants into the normalization procedure. The visual clearly demonstrates that there are larger differences between normalized adult and child vowel categories that taken into account individual formants than vocal tract alone. In other words, beyond vocal tract length and even phone identity, there is still additional variability between adults and children to be accounted for, as the larger values in the right panel demonstrate. These differences between Lobanov-normalized categories and \(\Delta\)F-normalized categories will be quantified below. It is important to note that the differences between adult and child vowel categories did nevertheless differ by age and phone. For example, there was a large amount of variation between the adult and 4;0 {[}e{]} category, but less between the adult and 10;0 {[}o{]} category.
+Figure \ref{fig:rms-dif-figure} displays the difference between the adult and child vowel categories for the two scaling techniques. The left panel of the figure shows the difference between adult and child \(\Delta\)F-normalized categories, or normalization that incorporates just vocal tract length. The right panel shows the difference between adult and child Lobanov-normalized categories, which incorporate individual formants into the normalization procedure. The visual clearly demonstrates that there are larger differences between normalized adult and child vowel categories that take into account individual formants than vocal tract alone. In other words, beyond vocal tract length and even phone identity, there is still additional variability between adults and children to be accounted for, as the larger values in the right panel demonstrate. These differences between Lobanov-normalized categories and \(\Delta\)F-normalized categories will be quantified below. It is important to note that the differences between adult and child vowel categories did nevertheless differ by age and phone. For example, there was a large amount of variation between the adult and 4;0 {[}e{]} category, but less between the adult and 10;0 {[}o{]} category.
 
-Thus far, though we employed a different methodology, these results corroborate Turner et al.~(2009): there is additional, unexplained variability in formant frequencies even after removing the effects of phone identity and vocal tract length. Turner et al.~(2009) concluded that this outstanding variability was due to measurement error resultant from formant tracking in spectrograms and employing LPC. The authors concluded that any remaining variability beyond that was likely statistically meaningless.
+Thus far, though we employed a different methodology, these results corroborate Turner et al.~(2009): there is additional, unexplained variability in formant frequencies even after removing the effects of phone identity and vocal tract length. However, Turner et al.~(2009) concluded that this outstanding variability was due to measurement error in formant tracking in spectrograms and the use of LPC. The authors concluded that any remaining variability beyond that was likely to be statistically meaningless.
 
-On the basis of this observed difference between the two scaling techniques, we hypothesized that the increased variability in the children's productions \emph{could} be due to their articulatory configurations, and not simple measurement error. Specifically, if some children were not compensating for the ratios between their front and back cavities by adjusting their lingual positioning to approximate adult-like formant frequency ratios between cavities, then we would see this exact difference between the uniform and non-uniform scaling techniques. However, this preliminary conclusion requires additional evidence.
+On the basis of this observed difference between the two scaling techniques, we hypothesized that the increased variability in the children's productions \emph{could} be due to their articulatory configurations, and not simple measurement error. Specifically, if some children were not compensating for the ratios between their front and back cavities by adjusting their lingual positioning to approximate adult-like formant frequency ratios between cavities, then we might see this exact difference between the uniform and non-uniform scaling techniques. However, this preliminary conclusion requires additional evidence.
 
-We took several steps to evaluate the idea that the outstanding variability might reflect children's lack of compensation for their vocal tract morphologies - at least some of the time.
+We took several steps to evaluate the idea that the outstanding variability might reflect children's lack of compensation for their vocal tract morphologies.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  We classified the children into two groups on the basis of their ratios between back-affiliated and front-affiliated formants. We did so using a technique that did not require us to make assumptions about which formants originated in which cavity (to be explained in detail in the following section). This split was designed to classify the children into more ``adult-like'' articulators (those children who have either approximated adult-like cavity ratios or who adjust their lingual articulations to approximate the adult-like acoustics) and the rest of the children into more ``child-like'' articulators (those children who may not compensate articulatorily as much for their vocal tract morphologies).
+  We classified the children into two groups on the basis of their ratios between back-affiliated and front-affiliated formants. We did so using a technique that did not require us to make assumptions about which formants originated in which cavity (to be explained in detail in the following section). This split was designed to classify the children into more ``adult-like'' articulators (those children who have either approximated adult-like cavity ratios or who adjust their lingual articulations to approximate adult-like acoustics). The rest of the children were classified into more ``child-like'' articulators (those children who may not compensate articulatorily as much for their vocal tract morphologies).
 \item
-  We fit a series of statistical models to the children's un-normalized formant frequency data. In doing so, we were able to evaluate in a stepwise manner the effect of adding parameters that are known to influence formant frequency values, such as the identity of a phone or vocal tract length, as well as parameters that we hypothesized \emph{might} influence formant values, such as the ratio between front- and back-cavity affiliated formants.
+  We fit a series of statistical models to the children's un-normalized formant frequency data. In doing so, we were able to evaluate in a stepwise manner the effect of adding parameters that are known to influence formant frequency values, such phone identity or vocal tract length, as well as parameters that we hypothesized \emph{might} influence formant values, such as the ratio between front- and back-cavity affiliated formants.
 \end{enumerate}
 
 The following two sections outline the results of these analyses.
@@ -485,17 +407,17 @@ The following two sections outline the results of these analyses.
 \hypertarget{classification-into-adult-like-and-child-like-articulators}{%
 \subsubsection{Classification into adult-like and child-like articulators}\label{classification-into-adult-like-and-child-like-articulators}}
 
-The first way that we evaluated if children were compensating for their vocal tract morphology was to divide the children into two groups: adult-like articulators and child-like articulators. This classification was made on the basis of the children's ratios between the first and second formants for {[}a{]} and ratios between the second and third formants for {[}a{]}. We opted for these criteria for the classification for several reasons. One, if children do not alter their articulatory strategies to compensate for their relatively longer oral cavity, then they are expected to show different ratios between these formants when compared to adults. Specifically, the longer oral cavity relative to pharyngeal - because the pharyngeal cavity grows disproportionately fast in childhood for boys and girls - results in a heightened F2 compared to an adult model (when assuming adult-like formant-cavity affiliations). Thus, those formants deriving from the back cavity in children would be lower than formants affiliated to a front cavity.
+The first way that we evaluated if children were compensating for their vocal tract morphology was to divide the children into two groups: adult-like articulators and child-like articulators. This classification was made on the basis of the children's ratios between the first and second formants for {[}a{]} and ratios between the second and third formants for {[}a{]}. We opted for these criteria for the classification for several reasons. One, if children do not alter their articulatory strategies to compensate for their relatively longer oral cavity, then they would be expected to show different ratios between these formants when compared to adults. Specifically, the longer oral cavity relative to pharyngeal - because the pharyngeal cavity grows disproportionately fast in childhood for boys and girls - results in a heightened F2 compared to an adult model (when assuming adult-like formant-cavity affiliations). Thus, those formants deriving from the back cavity in children would be lower relative to the formants affiliated to a front cavity.
 
-The decision was made to calculate formant frequency \emph{ratios} because doing so does not require knowledge or assumptions of formant-cavity affiliations. Formant-cavity affiliations may be problematic assumptions to draw acoustically because they can become highly unpredictable in the event of some articulatory modifications (e.g.~undershoot). Formant-cavity affiliations can also potentially vary due to idiosyncratic vocal tract characteristics (e.g.~a heightened palate). Formant ratios, such as the measures proposed here, merely reflect the relationship between the cavity sizes, independent of specific affiliations, allowing us to skirt the issue of cavity-formant affiliation (Apostol et al., 2004).
+The decision was made to calculate formant frequency \emph{ratios} because doing so does not require knowledge or assumptions of formant-cavity affiliations. Formant-cavity affiliations may be problematic assumptions to draw acoustically because they can become highly unpredictable in the event of some articulatory modifications (e.g.~undershoot). Formant-cavity affiliations can also potentially vary due to idiosyncratic vocal tract characteristics (e.g.~a heightened palate). Formant ratios, such as the measures proposed here, merely reflect the relationship between the cavity sizes, independent of specific affiliations, allowing us to skirt entirely the issue of affiliation (Apostol et al., 2004).
 
-Finally, we chose the ratios between F1 to F2 and F2 to F3 for {[}a{]} in particular because it has been predicted that the ratio between F1 and F2 for {[}a{]} is larger in children than adults and that the ratio between F2 and F3 for {[}a{]} is smaller in children than adults (Ménard et al., 2007). We additionally opted to calculate formant ratios for {[}a{]}, instead of {[}i{]} or {[}u{]}, as Helmholtz resonators are the source of (some of) the formants of {[}i{]} and {[}u{]}. Since Helmholtz resonators reflect constriction length and area, in addition to cavity length and volume, these were less ideal options to reflect the ratio between cavity sizes in the children.
+Finally, we chose F1 to F2 and F2 to F3 ratios for {[}a{]} in particular because it has been predicted that the ratio between F1 and F2 for {[}a{]} is larger in children than adults and that the ratio between F2 and F3 for {[}a{]} is smaller in children than adults (Ménard et al., 2007). We additionally opted to calculate formant ratios for {[}a{]}, instead of {[}i{]} or {[}u{]}, as Helmholtz resonators are the source of (some of) the formants of {[}i{]} and {[}u{]}. Since Helmholtz resonators reflect constriction length and area, in addition to cavity length and volume, these were less ideal options to reflect the ratio between cavity sizes in the children.
 
-Before splitting the children into groups on the basis of these formant ratios, we performed an additional check on our assumptions concerning the ratios between back- and front-affiliated formants. Like the child vocal tract, though to a lesser extent, the female adult vocal tract has a smaller pharyngeal cavity relative to oral. Consequently, to validate the formant ratio approach, we calculated the mean F1, F2, and F3 for {[}a{]} over all of the adult speakers in the classic Petersen \& Barney (1952) vowel dataset and also the Hillenbrand et al.~(1995) vowel dataset using the phonTools R library (Barreda, 2015). The Petersen \& Barney dataset contained n=28 adult women and n=33 adult men and the Hillenbrand et al.~dataset contained n=48 adult women and n=45 adult men. Overall, we confirmed the relationship between F1 and F2 for {[}a{]}: in the Petersen \& Barney dataset, women had a higher average F1:F2 ratio (female mean=0.70, sd=0.06) than men (male mean=0.66, sd=0.04). This was also the case for F1:F2 in the Hillenbrand dataset: F1:F2 for women (mean=0.61, sd=0.07) and F1:F2 for men (mean=0.58, sd=0.06).
+Before splitting the children into groups on the basis of these formant ratios, we performed an additional check on our assumptions concerning the ratios between back- and front-affiliated formants. To do that, the hypotheses concerning the formant ratios were evaluated on two data sets containing formant measurements from adult speakers. Like the child vocal tract, though to a lesser extent, the female adult vocal tract has a smaller pharyngeal cavity relative to oral. Consequently, to validate the formant ratio approach, we calculated the mean F1, F2, and F3 for {[}a{]} over all of the adult speakers in the classic Petersen \& Barney (1952) vowel dataset and also the Hillenbrand et al.~(1995) vowel dataset using the phonTools R library (Barreda, 2015). The Petersen \& Barney dataset contained n=28 adult women and n=33 adult men and the Hillenbrand et al.~dataset contained n=48 adult women and n=45 adult men. Overall, we confirmed the relationship between F1 and F2 for {[}a{]}: in the Petersen \& Barney dataset, women had a higher average F1:F2 ratio (female mean=0.70, sd=0.06) than men (male mean=0.66, sd=0.04). This was also the case for F1:F2 in the Hillenbrand dataset: F1:F2 for women (mean=0.61, sd=0.07) and F1:F2 for men (mean=0.58, sd=0.06).
 
-The ratio between F2 and F3 in the datasets was less straightforward. As anticipated, women had a smaller F2:F3 ratio in the Petersen \& Barney dataset, though this difference was slight (female: mean=0.44, sd=0.05, male: mean=0.45, sd=0.06). However, women had a larger average F2:F3 ratio in the Hillenbrand data (female: mean=0.54, sd=0.05, male: mean=0.52, sd=0.06). As a result of this, although we factor both F1:F2 and F2:F3 into the calculation of the median split by children, we rely only on the F1:F2 ratio for our statistical modeling procedure presented in the following section.
+The ratio between F2 and F3 in the datasets was less straightforward. As anticipated, women had a smaller F2:F3 ratio in the Petersen \& Barney dataset, though this difference was slight (female: mean=0.44, sd=0.05, male: mean=0.45, sd=0.06). However, women had a larger average F2:F3 ratio in the Hillenbrand data (female: mean=0.54, sd=0.05, male: mean=0.52, sd=0.06). As a result of this, although we factor both F1:F2 and F2:F3 into the calculation of the median split by children, we rely only on the F1:F2 ratio for our statistical modeling procedure presented in the following section becuase that ratio appears to be the most reliable indicator of cavity size.
 
-Having confirmed that the formant ratios express differences in cavity size, we turned to the calculations of formant ratios for the children in the current study. To do this, we calculated the mean F1, F2, and F3 for {[}a{]} for each child. (Participant c64 only had one valid {[}a{]} token, so formant ratios for that participant were not computed and c64 is not included in the following analyses.) Then, we calculated the median F1:F2 ratio and F2:F3 ratio for {[}a{]} over all the children. Those children who had both a higher F1:F2 ratio \emph{and} lower F2:F3 ratio for {[}a{]} were classified as ``child-like'' articulators. Children who did not satisfy both criteria were classified as ``adult-like'' articulators. So a child who only had a higher F1:F2 ratio or only a lower F2:F3 ratio was not classified as child-like. This method allowed us to maximally conservative in the classification of the children.
+Having confirmed that the formant ratios do reflect differences in cavity size, we turned to the calculations of formant ratios for the children in the current study. To do this, we calculated the mean F1, F2, and F3 for {[}a{]} for each child. (Participant c64 only had one valid {[}a{]} token, so formant ratios for that participant were not computed and c64 is not included in the following analyses.) Then, we calculated the median F1:F2 ratio and F2:F3 ratio for {[}a{]} over all the children. Those children who had both a higher F1:F2 ratio \emph{and} lower F2:F3 ratio for {[}a{]} were classified as ``child-like'' articulators. Children who did not satisfy both criteria were classified as ``adult-like'' articulators. So a child who only had a higher F1:F2 ratio or only a lower F2:F3 ratio was not classified as child-like. This method allowed us to maximally conservative in the classification of the children.
 
 Table \ref{tab:type-of-articulator-tbl} displays the number of children by age group who were classified as adult-like articulators and child-like articulators. As anticipated, in the older age groups 9;0 and 10;0, there are fewer children who were classified as child-like articulators. Still, the fact that several children were classified as child-like articulators, even a few in the eldest age groups, demonstrates that there may be great variability in when children learn to approximate adult-like acoustic patterning and adult-like cavity sizes. This makes sense as children grow at different rates, have growth spurts at different times, and have different experience practicing language. These factors are further considered in the discussion section.
 
@@ -536,13 +458,11 @@ Age & adult-like articulator & child-like articulator & total\\
 \hypertarget{fitting-models-to-un-normalized-formant-frequency-data}{%
 \subsubsection{Fitting models to un-normalized formant frequency data}\label{fitting-models-to-un-normalized-formant-frequency-data}}
 
-As a final step in the analysis, we built statistical models to predict the values of un-normalized formant frequency data from the child speakers. The goal of this modeling was to determine the predictors of formant frequencies in the children. The constructed models permitted control of factors known to influence formant frequencies, such as phone identity and vocal tract length, so that we could determine if the addition of cavity size (ratio of F1:F2 for {[}a{]}) explained any remaining variance in the frequencies. Thus the dependent variable in the modeling was \emph{un-normalized} formant frequency data (separate models for F1 and F2; details below) because the intent was to factor out anatomical differences via the addition of a \textbf{Vocal Tract Length} parameter in the models. Additionally, for this modeling, we only incorporated the peripheral, phonemic vowels /a, i, u/ because we did not have sufficient data for the allophonic vowels to include them in the modeling.
+As a final step to determine what accounts for the outstanding variation in the formant data, I built statistical models to predict the values of unnormalized formant frequency data from the child speakers. The goal of this modeling was to determine the predictors of formant frequencies in the children. The constructed models permitted control of factors known to influence formant frequencies, such as phone identity and vocal tract length, so that we could determine if the addition of cavity size (ratio of F1:F2 for {[}a{]}) explained any remaining formant frequency variance. Thus the dependent variable in the modeling was \emph{un-normalized} formant frequency data (separate models for F1 and F2; details below) because the intent was to factor out anatomical differences via the addition of a \textbf{Vocal Tract Length} parameter in the models. Additionally, for this modeling, we only incorporated the peripheral, phonemic vowels /a, i, u/ because we did not have sufficient data for the allophonic vowels to include them in the modeling.
 
-Two generalized linear mixed effects models (GLMMs) were fit to predict the children's un-normalized formant frequency data. One model was fit to predict the F1 measures and another model was fit to predict the F2 measures. The choice to fit GLMMs was made due to the non-negative and right-skewed nature of the F1 and F2 outcome variables. Continuous variables were mean-centered and standardized to facilitate model interpretation. Both models were fit according to the following procedure: first, a baseline model with only the random intercepts for individual \textbf{Speaker} was fit. Then, model parameters were added in the following order: \textbf{Phone} (/a, i, u/), \textbf{Vocal Tract Length}, \textbf{F1:F2 ratio for {[}a{]}}, and \textbf{Gender}. Parameter significance was determined on the basis of log likelihood tests and AIC values as well as p-values procured from the model summaries. Once again the models were only fit to predict formant variability within the child speakers.
+Two generalized linear mixed effects models (GLMMs) were fit to predict the children's un-normalized formant frequency data. One model was fit to predict the F1 measures and another model was fit to predict the F2 measures. The choice to fit GLMMs was made due to the non-negative and right-skewed nature of the F1 and F2 outcome variables. Continuous variables were mean-centered and standardized to facilitate model interpretation. Both models were fit according to the following procedure: first, a baseline model with only the random intercepts for individual \textbf{Speaker} was fit. Then, model parameters were added in the following order: \textbf{Phone} (/a, i, u/), \textbf{Vocal Tract Length}, \textbf{F1:F2 ratio for {[}a{]}}, and \textbf{Gender}. Once again the models were only fit to predict formant variability within the child speakers.
 
-For both the F1 and F2 models, \textbf{Phone}, \textbf{Vocal Tract Length}, and \textbf{F1:F2 ratio for {[}a{]}} improved upon baseline model fits. \textbf{Gender} did not improve upon the F1 or F2 models containing \textbf{Phone}, \textbf{Vocal Tract Length}, and \textbf{F1:F2 ratio for {[}a{]}}. The final model summary for F1 is listed in Table \ref{tab:f1-model} and the model summary for F2 is in Table \ref{tab:f2-model}. This result for the models suggests that there is additional variance in the formant frequency measures beyond phone identity and vocal tract length - a finding that Turner et al.~(2009) likewise ascertained. However, the addition of the \textbf{F1:F2 ratio for {[}a{]}} parameter in a model already controlling for extant variability (i.e.~in the error term) suggests that the outstanding variance in the formant frequency measures can likewise be accounted for with the size of the children's cavities.
-
-Overall, these results confirm previous research that vocal tract length and phone identity explain large amounts of between-speaker acoustic variation. However, via a step-by-step elimination of these known variables, and statistical model building, we have demonstrated that there may be some school-aged children who do not yet approximate adult-like articulatory configurations, as evidenced in the ratios of front and back cavity-affiliated formants. This lack of compensation for vocal tract morphology, which operates \emph{somewhat} independently of vocal tract length, may explain some of the variability known to characterize child speech.
+For both the F1 and F2 models, \textbf{Phone}, \textbf{Vocal Tract Length}, and \textbf{F1:F2 ratio for {[}a{]}} improved upon baseline model fits. \textbf{Gender} did not improve upon the F1 or F2 models containing \textbf{Phone}, \textbf{Vocal Tract Length}, and \textbf{F1:F2 ratio for {[}a{]}}. The final model summary for F1 is listed in Table \ref{tab:f1-model} and the model summary for F2 is in Table \ref{tab:f2-model}. This result for the models suggests that there is additional variance in the formant frequency measures beyond phone identity and vocal tract length - something that Turner et al.~(2009) likewise concluded However, the addition of the \textbf{F1:F2 ratio for {[}a{]}} parameter in a model already controlling for extant variability (i.e.~in the error term) suggests that the outstanding variance in the formant frequency measures can be accounted for with the size of the children's cavities.
 
 \begin{table}[tbp]
 
@@ -592,8 +512,13 @@ F1:F2 ratio for [a] & -537.91 & 150.20 & -3.58 & 0.00 & -243.52,-832.29\\
 
 \end{table}
 
+Overall, these results confirm previous research that vocal tract length and phone identity explain large amounts of between-speaker acoustic variation. However, via a step-by-step elimination of these known variables, and statistical model building, we have demonstrated that some school-aged children do not yet approximate adult-like articulatory configurations, as evidenced in the ratios of front and back cavity-affiliated formants. This lack of compensation for vocal tract morphology, which operates \emph{somewhat} independently of vocal tract length, may explain some of the variability known to characterize child speech.
+
 \hypertarget{appendices}{%
 \section{Appendices}\label{appendices}}
+
+\hypertarget{descriptive-statistics-of-delta-f-normalized-formants}{%
+\subsection{Descriptive statistics of Delta-F-normalized formants}\label{descriptive-statistics-of-delta-f-normalized-formants}}
 
 \begin{table}[!h]
 
@@ -603,15 +528,15 @@ F1:F2 ratio for [a] & -537.91 & 150.20 & -3.58 & 0.00 & -243.52,-832.29\\
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & 0.70 & 0.13 & 1.29 & 0.11 & 2.63 & 0.28 & NA & NA\\
-5 & 0.62 & 0.19 & 1.31 & 0.13 & 2.69 & 0.27 & NA & NA\\
-6 & 0.68 & 0.11 & 1.31 & 0.11 & 2.63 & 0.25 & NA & NA\\
-7 & 0.62 & 0.15 & 1.33 & 0.17 & 2.65 & 0.33 & NA & NA\\
-8 & 0.69 & 0.11 & 1.28 & 0.11 & 2.60 & 0.38 & NA & NA\\
+4 & 0.70 & 0.11 & 1.28 & 0.10 & 2.63 & 0.26 & NA & NA\\
+5 & 0.56 & 0.20 & 1.31 & 0.12 & 2.70 & 0.31 & NA & NA\\
+6 & 0.69 & 0.12 & 1.33 & 0.13 & 2.72 & 0.30 & NA & NA\\
+7 & 0.61 & 0.16 & 1.34 & 0.16 & 2.67 & 0.28 & NA & NA\\
+8 & 0.69 & 0.11 & 1.29 & 0.11 & 2.58 & 0.38 & NA & NA\\
 \addlinespace
-9 & 0.62 & 0.16 & 1.36 & 0.11 & 2.50 & 0.20 & NA & NA\\
-10 & 0.63 & 0.12 & 1.34 & 0.19 & 2.64 & 0.37 & NA & NA\\
-adult & 0.61 & 0.13 & 1.35 & 0.08 & 2.43 & 0.22 & 3.4 & 0.17\\
+9 & 0.64 & 0.14 & 1.38 & 0.09 & 2.59 & 0.29 & NA & NA\\
+10 & 0.61 & 0.11 & 1.35 & 0.19 & 2.60 & 0.34 & NA & NA\\
+adult & 0.61 & 0.13 & 1.34 & 0.13 & 2.44 & 0.22 & 3.42 & 0.21\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -625,14 +550,14 @@ adult & 0.61 & 0.13 & 1.35 & 0.08 & 2.43 & 0.22 & 3.4 & 0.17\\
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
 4 & 0.25 & 0.04 & 2.29 & 0.20 & 2.81 & 0.27 & NA & NA\\
-5 & 0.27 & 0.06 & 2.25 & 0.22 & 2.83 & 0.24 & NA & NA\\
-6 & 0.26 & 0.06 & 2.25 & 0.18 & 2.80 & 0.19 & NA & NA\\
-7 & 0.26 & 0.05 & 2.27 & 0.18 & 2.82 & 0.20 & NA & NA\\
-8 & 0.25 & 0.04 & 2.20 & 0.14 & 2.75 & 0.27 & NA & NA\\
+5 & 0.27 & 0.05 & 2.24 & 0.22 & 2.81 & 0.23 & NA & NA\\
+6 & 0.25 & 0.06 & 2.25 & 0.18 & 2.79 & 0.19 & NA & NA\\
+7 & 0.26 & 0.06 & 2.27 & 0.18 & 2.83 & 0.21 & NA & NA\\
+8 & 0.25 & 0.04 & 2.19 & 0.16 & 2.77 & 0.26 & NA & NA\\
 \addlinespace
-9 & 0.27 & 0.06 & 2.26 & 0.20 & 2.85 & 0.27 & NA & NA\\
-10 & 0.32 & 0.05 & 2.20 & 0.21 & 2.76 & 0.25 & NA & NA\\
-adult & 0.33 & 0.05 & 2.24 & 0.15 & 2.71 & 0.14 & 3.68 & 0.27\\
+9 & 0.26 & 0.06 & 2.22 & 0.22 & 2.79 & 0.29 & NA & NA\\
+10 & 0.31 & 0.05 & 2.21 & 0.23 & 2.79 & 0.27 & NA & NA\\
+adult & 0.33 & 0.05 & 2.20 & 0.18 & 2.71 & 0.13 & 3.68 & 0.25\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -652,15 +577,39 @@ Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 8 & 0.36 & 0.04 & 0.83 & 0.24 & 2.63 & 0.29 & NA & NA\\
 \addlinespace
 9 & 0.30 & 0.08 & 0.98 & 0.27 & 2.81 & 0.37 & NA & NA\\
-10 & 0.32 & 0.07 & 1.03 & 0.23 & 2.93 & 0.37 & NA & NA\\
+10 & 0.32 & 0.06 & 1.04 & 0.22 & 2.92 & 0.39 & NA & NA\\
 adult & 0.37 & 0.07 & 0.91 & 0.33 & 2.54 & 0.23 & 3.52 & 0.38\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\hypertarget{dispersion-measured-via-cov}{%
+\subsection{Dispersion measured via CoV}\label{dispersion-measured-via-cov}}
+
+\begin{table}
+
+\caption{\label{tab:delta-disp-tbl-group-alldata}Vowel category dispersion by age group and phone: all data}
+\centering
+\begin{tabular}[t]{llll}
+\toprule
+Age & [a] mean (SD) range & [i] & [u]\\
+\midrule
+4 & 0.17 ( 0.11 ) 0.02 - 0.57 & 0.22 ( 0.2 ) 0.03 - 0.94 & 0.15 ( 0.12 ) 0.03 - 0.42\\
+5 & 0.2 ( 0.11 ) 0.01 - 0.56 & 0.23 ( 0.21 ) 0.03 - 1.36 & 0.13 ( 0.09 ) 0.02 - 0.42\\
+6 & 0.19 ( 0.11 ) 0.02 - 0.55 & 0.19 ( 0.16 ) 0.01 - 0.97 & 0.32 ( 0.26 ) 0.04 - 1.08\\
+7 & 0.19 ( 0.09 ) 0.01 - 0.54 & 0.18 ( 0.12 ) 0.02 - 0.67 & 0.38 ( 0.27 ) 0.01 - 1.37\\
+8 & 0.21 ( 0.23 ) 0.01 - 1.12 & 0.16 ( 0.17 ) 0.01 - 1.28 & 0.36 ( 0.23 ) 0.1 - 1.07\\
+\addlinespace
+9 & 0.16 ( 0.11 ) 0.02 - 0.72 & 0.17 ( 0.13 ) 0.02 - 0.64 & 0.22 ( 0.15 ) 0.02 - 0.75\\
+10 & 0.19 ( 0.13 ) 0 - 0.89 & 0.16 ( 0.11 ) 0.02 - 0.5 & 0.21 ( 0.14 ) 0.02 - 0.65\\
+adult & 0.18 ( 0.12 ) 0.01 - 0.63 & 0.12 ( 0.07 ) 0.01 - 0.3 & 0.29 ( 0.21 ) 0.03 - 1.11\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[!h]
 
-\caption{\label{tab:delta-disp-tbl-group-alldata}Group-level average CoV by formant and vowel for children and adults: all data}
+\caption{\label{tab:delta-disp-tbl-group}Average CoV by formant and vowel for children and adults}
 \centering
 \begin{tabular}[t]{lrrrrrr}
 \toprule
@@ -668,60 +617,84 @@ adult & 0.37 & 0.07 & 0.91 & 0.33 & 2.54 & 0.23 & 3.52 & 0.38\\
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
 Age & [a] & [i] & [u] & [a]  & [i]  & [u] \\
 \midrule
-4 & 0.26 & 0.18 & 0.13 & 0.09 & 0.13 & 0.27\\
-5 & 0.28 & 0.21 & 0.11 & 0.10 & 0.15 & 0.15\\
-6 & 0.22 & 0.23 & 0.23 & 0.10 & 0.09 & 0.40\\
-7 & 0.25 & 0.23 & 0.25 & 0.12 & 0.09 & 0.41\\
-8 & 0.19 & 0.20 & 0.18 & 0.19 & 0.12 & 0.42\\
+4 & 0.26 & 0.18 & 0.15 & 0.09 & 0.13 & 0.30\\
+5 & 0.30 & 0.19 & 0.14 & 0.10 & 0.16 & 0.15\\
+6 & 0.23 & 0.22 & 0.22 & 0.12 & 0.12 & 0.38\\
+7 & 0.26 & 0.23 & 0.23 & 0.13 & 0.09 & 0.42\\
+8 & 0.17 & 0.19 & 0.18 & 0.18 & 0.13 & 0.41\\
 \addlinespace
-9 & 0.26 & 0.22 & 0.20 & 0.11 & 0.10 & 0.26\\
-10 & 0.26 & 0.16 & 0.18 & 0.16 & 0.09 & 0.25\\
-adult & 0.27 & 0.15 & 0.22 & 0.12 & 0.07 & 0.35\\
+9 & 0.22 & 0.22 & 0.20 & 0.11 & 0.10 & 0.26\\
+10 & 0.22 & 0.17 & 0.17 & 0.16 & 0.09 & 0.34\\
+adult & 0.27 & 0.15 & 0.22 & 0.13 & 0.07 & 0.34\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[!h]
-
-\caption{\label{tab:delta-disp-tbl-spkr-alldata-f1}Individual-level CoV by formant and vowel for children and adults: F1}
+\begin{figure}
 \centering
-\begin{tabular}[t]{llll}
+\includegraphics{3_vtl_results_files/figure-latex/delta-disp-fig-1.pdf}
+\caption{\label{fig:delta-disp-fig}Group-level RMS by age and phone}
+\end{figure}
+
+\hypertarget{models-predicting-dispersion-measured-via-cov}{%
+\section{Models predicting dispersion measured via CoV}\label{models-predicting-dispersion-measured-via-cov}}
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:f2-i-model}Model predicting CoV for F2 of [i]}
+
+\begin{tabular}{llllll}
 \toprule
-Age & [a] mean (SD) range & [i] & [u]\\
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-4 & 0.19 ( 0.14 ) 0.04 - 0.5 & 0.11 ( 0.09 ) 0.01 - 0.23 & 0.13 ( 0.02 ) 0.1 - 0.14\\
-5 & 0.23 ( 0.17 ) 0.03 - 0.52 & 0.15 ( 0.08 ) 0.04 - 0.26 & 0.08 ( 0.04 ) 0.01 - 0.13\\
-6 & 0.17 ( 0.13 ) 0.03 - 0.41 & 0.15 ( 0.1 ) 0.04 - 0.33 & 0.19 ( 0.08 ) 0.05 - 0.31\\
-7 & 0.2 ( 0.11 ) 0.02 - 0.46 & 0.13 ( 0.09 ) 0.03 - 0.42 & 0.18 ( 0.09 ) 0.04 - 0.39\\
-8 & 0.12 ( 0.09 ) 0.04 - 0.3 & 0.09 ( 0.07 ) 0.01 - 0.2 & 0.05 ( 0.04 ) 0.01 - 0.12\\
-\addlinespace
-9 & 0.21 ( 0.14 ) 0.05 - 0.47 & 0.1 ( 0.05 ) 0.04 - 0.17 & 0.15 ( 0.07 ) 0.05 - 0.23\\
-10 & 0.17 ( 0.14 ) 0.03 - 0.43 & 0.11 ( 0.07 ) 0.01 - 0.23 & 0.07 ( 0.06 ) 0.01 - 0.16\\
-adult & 0.18 ( 0.14 ) 0.05 - 0.48 & 0.12 ( 0.05 ) 0.06 - 0.22 & 0.13 ( 0.08 ) 0.03 - 0.29\\
+Intercept & -3.23 & 0.19 & -17.22 & 0.00 & -2.87,-3.6\\
+10 & 0.71 & 0.27 & 2.68 & 0.01 & 1.23,0.19\\
+4 & 0.69 & 0.27 & 2.54 & 0.01 & 1.23,0.16\\
+5 & 0.93 & 0.26 & 3.60 & 0.00 & 1.44,0.43\\
+6 & 0.57 & 0.25 & 2.24 & 0.03 & 1.07,0.07\\
+7 & 0.31 & 0.23 & 1.33 & 0.18 & 0.76,-0.15\\
+8 & 0.69 & 0.25 & 2.76 & 0.01 & 1.18,0.2\\
+9 & 0.49 & 0.29 & 1.66 & 0.10 & 1.06,-0.09\\
 \bottomrule
 \end{tabular}
+
+\end{threeparttable}
+\end{center}
+
 \end{table}
 
-\begin{table}[!h]
+\begin{table}[tbp]
 
-\caption{\label{tab:delta-disp-tbl-spkr-alldata-f2}Individual-level CoV by formant and vowel for children and adults: F2}
-\centering
-\begin{tabular}[t]{llll}
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:f1-u-model}Model predicting CoV for F1 of [u]}
+
+\begin{tabular}{llllll}
 \toprule
-Age & [a] mean (SD) range & [i] & [u]\\
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{S.E.} & \multicolumn{1}{c}{z.statistic} & \multicolumn{1}{c}{p.value} & \multicolumn{1}{c}{95\% CI}\\
 \midrule
-4 & 0.07 ( 0.02 ) 0.04 - 0.09 & 0.11 ( 0.08 ) 0.03 - 0.25 & 0.23 ( 0.14 ) 0.08 - 0.37\\
-5 & 0.08 ( 0.05 ) 0.01 - 0.21 & 0.13 ( 0.1 ) 0.03 - 0.33 & 0.14 ( 0.06 ) 0.08 - 0.25\\
-6 & 0.07 ( 0.04 ) 0.03 - 0.13 & 0.07 ( 0.03 ) 0.04 - 0.13 & 0.26 ( 0.09 ) 0.09 - 0.35\\
-7 & 0.1 ( 0.06 ) 0.03 - 0.26 & 0.06 ( 0.03 ) 0.01 - 0.17 & 0.31 ( 0.13 ) 0.08 - 0.51\\
-8 & 0.12 ( 0.11 ) 0.04 - 0.39 & 0.08 ( 0.08 ) 0.02 - 0.32 & 0.16 ( 0.11 ) 0.02 - 0.36\\
-\addlinespace
-9 & 0.09 ( 0.07 ) 0.03 - 0.23 & 0.08 ( 0.07 ) 0.03 - 0.22 & 0.19 ( 0.11 ) 0.08 - 0.33\\
-10 & 0.11 ( 0.08 ) 0.02 - 0.26 & 0.08 ( 0.03 ) 0.05 - 0.14 & 0.18 ( 0.12 ) 0.08 - 0.43\\
-adult & 0.08 ( 0.06 ) 0.02 - 0.22 & 0.04 ( 0.02 ) 0.01 - 0.07 & 0.18 ( 0.14 ) 0.04 - 0.48\\
+Intercept & -1.77 & 0.20 & -8.63 & 0.00 & -1.37,-2.17\\
+10 & -0.76 & 0.31 & -2.46 & 0.01 & -0.15,-1.37\\
+4 & -0.28 & 0.41 & -0.68 & 0.50 & 0.52,-1.08\\
+5 & -0.54 & 0.31 & -1.74 & 0.08 & 0.07,-1.15\\
+6 & 0.10 & 0.31 & 0.34 & 0.74 & 0.71,-0.5\\
+7 & 0.01 & 0.27 & 0.06 & 0.96 & 0.54,-0.51\\
+8 & -1.22 & 0.30 & -4.10 & 0.00 & -0.64,-1.81\\
+9 & -0.14 & 0.31 & -0.46 & 0.64 & 0.46,-0.75\\
 \bottomrule
 \end{tabular}
+
+\end{threeparttable}
+\end{center}
+
 \end{table}
+
+\hypertarget{descriptive-statistics-of-lobanov-normalized-formants}{%
+\subsection{Descriptive statistics of Lobanov-normalized formants}\label{descriptive-statistics-of-lobanov-normalized-formants}}
 
 \begin{table}[!h]
 
@@ -731,15 +704,15 @@ adult & 0.08 ( 0.06 ) 0.02 - 0.22 & 0.04 ( 0.02 ) 0.01 - 0.07 & 0.18 ( 0.14 ) 0.
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & 1.06 & 0.48 & -0.62 & 0.28 & -0.38 & 1.04 & NA & NA\\
-5 & 1.37 & 1.15 & -0.53 & 0.33 & -0.12 & 0.92 & NA & NA\\
-6 & 1.58 & 0.55 & -0.50 & 0.25 & -0.38 & 0.82 & NA & NA\\
-7 & 1.29 & 1.09 & -0.61 & 0.27 & -0.53 & 1.05 & NA & NA\\
-8 & 1.30 & 0.33 & -0.53 & 0.35 & -0.13 & 1.37 & NA & NA\\
+4 & 1.00 & 0.48 & -0.64 & 0.28 & -0.37 & 1.04 & NA & NA\\
+5 & 1.05 & 1.22 & -0.56 & 0.35 & -0.16 & 0.92 & NA & NA\\
+6 & 1.54 & 0.60 & -0.48 & 0.32 & 0.10 & 1.20 & NA & NA\\
+7 & 1.30 & 1.03 & -0.58 & 0.25 & -0.48 & 1.08 & NA & NA\\
+8 & 1.29 & 0.33 & -0.48 & 0.29 & -0.37 & 1.17 & NA & NA\\
 \addlinespace
-9 & 1.63 & 0.66 & -0.42 & 0.31 & -0.68 & 0.76 & NA & NA\\
-10 & 1.68 & 0.62 & -0.44 & 0.46 & -0.42 & 1.07 & NA & NA\\
-adult & 1.50 & 0.95 & -0.33 & 0.24 & -0.76 & 0.99 & -0.58 & 0.74\\
+9 & 1.56 & 0.77 & -0.42 & 0.29 & -0.52 & 0.78 & NA & NA\\
+10 & 1.55 & 0.67 & -0.44 & 0.46 & -0.48 & 0.96 & NA & NA\\
+adult & 1.37 & 0.90 & -0.28 & 0.31 & -0.69 & 1.04 & -0.41 & 0.84\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -752,15 +725,15 @@ adult & 1.50 & 0.95 & -0.33 & 0.24 & -0.76 & 0.99 & -0.58 & 0.74\\
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & -0.90 & 0.20 & 1.14 & 0.40 & 0.38 & 1.06 & NA & NA\\
-5 & -0.63 & 0.26 & 0.96 & 0.52 & 0.38 & 1.10 & NA & NA\\
-6 & -0.79 & 0.26 & 1.03 & 0.30 & 0.26 & 0.65 & NA & NA\\
-7 & -0.80 & 0.34 & 1.04 & 0.21 & 0.41 & 0.91 & NA & NA\\
-8 & -0.90 & 0.25 & 0.96 & 0.29 & 0.41 & 0.90 & NA & NA\\
+4 & -0.88 & 0.18 & 1.14 & 0.40 & 0.33 & 1.15 & NA & NA\\
+5 & -0.64 & 0.26 & 0.98 & 0.43 & 0.24 & 1.01 & NA & NA\\
+6 & -0.82 & 0.22 & 0.99 & 0.37 & 0.21 & 0.71 & NA & NA\\
+7 & -0.81 & 0.32 & 1.04 & 0.24 & 0.39 & 0.91 & NA & NA\\
+8 & -0.94 & 0.28 & 0.97 & 0.34 & 0.41 & 0.95 & NA & NA\\
 \addlinespace
-9 & -0.68 & 0.22 & 1.09 & 0.25 & 0.51 & 0.73 & NA & NA\\
-10 & -0.72 & 0.30 & 0.97 & 0.38 & -0.03 & 1.01 & NA & NA\\
-adult & -0.76 & 0.37 & 1.22 & 0.28 & 0.52 & 0.86 & 0.67 & 0.68\\
+9 & -0.68 & 0.18 & 1.05 & 0.22 & 0.50 & 0.76 & NA & NA\\
+10 & -0.78 & 0.30 & 0.97 & 0.37 & 0.02 & 1.08 & NA & NA\\
+adult & -0.79 & 0.42 & 1.30 & 0.28 & 0.52 & 0.77 & 0.63 & 0.77\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -773,18 +746,21 @@ adult & -0.76 & 0.37 & 1.22 & 0.28 & 0.52 & 0.86 & 0.67 & 0.68\\
 \toprule
 Age & F1 Median & MAD & F2 Median & MAD & F3 Median & MAD & F4 Median & MAD\\
 \midrule
-4 & -0.60 & 0.22 & -1.48 & 0.21 & -0.80 & 0.77 & NA & NA\\
-5 & -0.28 & 0.31 & -1.08 & 0.23 & -0.83 & 1.29 & NA & NA\\
-6 & -0.42 & 0.32 & -1.12 & 0.45 & -0.35 & 1.42 & NA & NA\\
-7 & -0.32 & 0.49 & -1.06 & 0.56 & -0.09 & 1.17 & NA & NA\\
-8 & -0.44 & 0.21 & -1.12 & 0.34 & -0.20 & 1.16 & NA & NA\\
+4 & -0.55 & 0.27 & -1.47 & 0.21 & -0.79 & 0.67 & NA & NA\\
+5 & -0.24 & 0.35 & -1.05 & 0.21 & -0.84 & 1.37 & NA & NA\\
+6 & -0.42 & 0.30 & -1.15 & 0.35 & -0.51 & 1.34 & NA & NA\\
+7 & -0.29 & 0.62 & -1.09 & 0.53 & -0.14 & 1.24 & NA & NA\\
+8 & -0.46 & 0.23 & -1.03 & 0.41 & -0.20 & 1.14 & NA & NA\\
 \addlinespace
-9 & -0.55 & 0.31 & -0.94 & 0.36 & 0.24 & 1.16 & NA & NA\\
-10 & -0.55 & 0.50 & -0.92 & 0.31 & 0.85 & 1.03 & NA & NA\\
-adult & -0.50 & 0.59 & -0.93 & 0.54 & -0.31 & 0.95 & 0.08 & 1.25\\
+9 & -0.57 & 0.34 & -0.93 & 0.36 & 0.17 & 1.21 & NA & NA\\
+10 & -0.58 & 0.42 & -0.90 & 0.30 & 0.67 & 1.25 & NA & NA\\
+adult & -0.48 & 0.54 & -0.95 & 0.51 & -0.29 & 0.86 & 0.07 & 1.24\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\hypertarget{vowel-plots}{%
+\subsection{Vowel plots}\label{vowel-plots}}
 
 \begin{figure}
 \centering
