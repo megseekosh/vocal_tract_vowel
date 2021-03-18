@@ -11,21 +11,25 @@ Triple vowel formant tracker that measures formants using three different system
 
 ## Dependencies
 
-The following Python dependencies are required to run the scripts in this repo: `pandas`, `fnmatch`, `phonlab`, `audiolabel`, (both available [here](https://github.com/rsprouse)), `numpy`, `seaborn`, `matplotlib`, and `numpy`, in addition to other generic libraries that are pretty standard with any Python installation. Additional R libraries are needed and are listed in the R scripts/notebooks. 
+The following Python dependencies are required to run the scripts in this repo: `pandas`, `fnmatch`, `espspy`, `phonlab`, `audiolabel`, (the latter three available [here](https://github.com/rsprouse)), `numpy`, `seaborn`, and `matplotlib`, in addition to other generic libraries that are pretty standard with any Python installation. Additional R libraries are needed and are listed in the R scripts/notebooks. In addition, this repo is configured for Python 3.7.0 or older. That doesn't mean it's unworkable with newer versions, but you will likely have to create some work arounds. One solution is to configure a Python 3.7.0 environment within Anaconda:
+
+`conda create --name py37 python=3.7.0 pip`
+
+`conda activate py37`
 
 
 ## Acoustic measurements
 Throughout these notebooks, the output from the cells has been cleared as it contains deanonymized participant information
 
-`1_triple_formant_tracker.ipynb` - track formants in three ways: 1) Inverse Filter Control Formant (Watanabe, 2001), 2) ESPS covariance, and 3) ESPS autocorrelation. Requires a .wav file for each speaker. Then, each tracker generates a directory containing the files with various acoustic measurements for each speaker (f0, formants, etc.). LPC order of 10 specificed for the children and 12 for the adults.
+`1_triple_formant_tracker.ipnyb` - track formants in three ways: 1) Inverse Filter Control Formant (Watanabe, 2001), 2) ESPS covariance, and 3) ESPS autocorrelation. Requires a .wav file for each speaker. Then, each tracker generates a directory containing the files with various acoustic measurements for each speaker (f0, formants, etc.). LPC order of 10 specified for the children and 12 for the adults.
 
-`2_get_median_formant.ipynb` - compute the median measurement of each formant from the three trackers at 25%, 50%, and 75% of the vowel. Generates the file `med_formants.csv` which can be used in `3_check_for_outliers.ipnyb`, `get_vt_length.ipnyb`, and to generate the manuscript results
+`2_get_median_formant.ipnyb` - compute the median measurement of each formant from the three trackers at 25%, 50%, and 75% of the vowel. Generates the file `med_formants.csv` which can be used in `3_check_for_outliers.ipnyb`, `get_vt_length.ipnyb`, and to generate the manuscript results
 
-`2_get_median_formant_lpc8.ipynb` - same as above, but attempting to track formants using an LPC filter order of 8 for children aged 4-6 years; this performed markedly worse than an LPC order of 10 (lots of mistracked F2) so LPC order of 10 was used for all children
+`2_get_median_formant_lpc8.ipnyb` - same as above, but attempting to track formants using an LPC filter order of 8 for children aged 4-6 years; this performed markedly worse than an LPC order of 10 (lots of mistracked F2) so LPC order of 10 was used for all children
 
-`3_check_for_outliers.ipynb` - histograms that visualize overlap in formant distribution by age group and individual speaker to identify mis-tracked formants 
+`3_check_for_outliers.ipnyb` - histograms that visualize overlap in formant distribution by age group and individual speaker to identify mis-tracked formants 
 
-`get_vt_length.ipynb` - compute child and adult vocal track length and DeltaF ratio using F1-F3 (for children) and F1-F4 (for adults); this script is sewn into the R script `3_vtl_results.Rmd` that generates the results section
+`get_vt_length.ipnyb` - compute child and adult vocal track length and DeltaF ratio using F1-F3 (for children) and F1-F4 (for adults); this script is sewn into the R script `3_vtl_results.Rmd` that generates the results section
 
 
 ## Data analysis
