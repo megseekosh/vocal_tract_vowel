@@ -36,7 +36,7 @@ Throughout these notebooks, the output from the cells has been cleared as it con
 
 `1_cleanvowels_eo.Rmd` - select relevant lexical items and removes all formant measurements outside of 3 MADs from the median; not included in the public repo as it contains personal identifying information; generates the file `cleaned_vowels_eo.csv` which is used to run `2_rename_participants.R`
 
-`2_rename_participants.R` - map participant names to anonymied IDs; not included in the public repo as it contains personal identifying information; generates the file `cleaned_vowels_eo.anonymized.csv` which is used to run `3_vtl_results.Rmd`
+`2_rename_participants.R` - map participant names to anonymized IDs; not included in the public repo as it contains personal identifying information; generates the file `cleaned_vowels_eo.anonymized.csv` which is used to run `3_vtl_results.Rmd`
 
 `3_vtl_results.Rmd` - generates results section of manuscript, including 1) calculation of vocal tract length/deltaF, 2) calculating vowel dispersion via coefficient of variation, 3) vowel normalization via Lobanov and DeltaF techniques, 4) modeling differences by normalization technique, 5) calculating formant ratios between supraglottal cavities, 6) modeling differences by supraglottal cavity formant ratios
 
